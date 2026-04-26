@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Task } from "../types/Job";
+import type { Task } from "../../types/Job";
 
 interface Props {
   tasks: Task[];

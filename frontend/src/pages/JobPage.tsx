@@ -1,8 +1,8 @@
 import { useParams, Navigate } from "react-router-dom";
 import { jobs } from "../types/Job";
 import Navbar from "../components/Navbar";
-import JobHeader from "../components/JobHeader";
-import TaskBody from "../components/TaskBody";
+import JobHeader from "../components/job/JobHeader";
+import TaskBody from "../components/job/TaskBody";
 import Footer from "../components/Footer";
 
 // Route: /jobs/:jobId
@@ -17,7 +17,7 @@ function JobPage() {
     <div>
       <Navbar />
       <JobHeader job={job} />
-      <TaskBody tasks={job.tasks}/>
+      <TaskBody tasks={job.tasks} />
       <Footer />
     </div>
   );

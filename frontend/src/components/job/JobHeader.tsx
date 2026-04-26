@@ -1,4 +1,4 @@
-import type { Job } from "../types/Job";
+import type { Job } from "../../types/Job";
 
 interface Props {
   job: Job;
