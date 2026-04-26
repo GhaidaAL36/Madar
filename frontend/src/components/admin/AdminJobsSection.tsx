@@ -1,5 +1,4 @@
-import { jobs } from "../../types/Job";
-
+import { jobs } from "../../data/jobsData";
 function AdminJobsSection() {
   return (
     <>

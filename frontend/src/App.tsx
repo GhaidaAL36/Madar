@@ -5,6 +5,7 @@ import { useScrollToTop } from "./hooks/useScrollToTop";
 
 import HomePage from "./pages/HomePage";
 import JobPage from "./pages/JobPage";
+import ReviewPage from "./pages/ReviewPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
@@ -17,6 +18,7 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/jobs/:jobId" element={<JobPage />} />
       <Route path="/not-found" element={<div>Not Found</div>} />
+      <Route path="/jobs/:id/tasks/:taskId/review" element={<ReviewPage />} />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/admin" element={<AdminPage />} />

@@ -1,4 +1,4 @@
-import { jobs } from "../../types/Job";
+import { jobs } from "../../data/jobsData";
 import { dummyUsers } from "./AdminUsersSection";
 
 type AdminSection = "dashboard" | "jobs" | "users";

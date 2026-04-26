@@ -1,5 +1,5 @@
 import { useParams, Navigate } from "react-router-dom";
-import { jobs } from "../types/Job";
+import { jobs } from "../data/jobsData";
 import Navbar from "../components/Navbar";
 import JobHeader from "../components/job/JobHeader";
 import TaskBody from "../components/job/TaskBody";
