@@ -1,12 +1,8 @@
 import { Link } from "react-router-dom";
-import { jobs } from "../../data/jobsData";
-import type { Job } from "../../types/Job";
+import { useJobs } from "../../hooks/useJobs";
 
-interface Props {
-  jobs: Job[];
-}
-
-function Jobs({}: Props) {
+function Jobs() {
+  const jobs = useJobs();
   return (
     <section className="px-20 py-25 bg-bg-light" id="jobs">
       {/* Section Header */}
