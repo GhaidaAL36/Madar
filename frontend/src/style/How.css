@@ -1,0 +1,10 @@
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 52px;
+  right: calc(33.3% + 24px);
+  left: calc(33.3% + 24px);
+  height: 2px;
+  background: var(--color-teal-pale);
+  z-index: 0;
+}

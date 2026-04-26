@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --font-primary: 'DM Sans', sans-serif;
+    --font-secondary: 'Tajawal', sans-serif;
+
+    --color-bg-dark: #0F2530;
+    --color-bg-dark-secondary: #1A3A4A;
+    --color-bg-dark-mid: #264D62;
+    --color-bg-light: #F9F6EF;
+    --color-bg-light-secondary: #EDE9DF;
+    --color-bg-card: #FFFFFF;
+    --color-bg-card-secondary: #EFF6F8;
+    --color-mist: #EFF6F8;
+
+    --color-gold: #E8B74A;
+    --color-gold-light: #F5D285;
+    --color-gold-dark: #C4922A;
+    --color-gold-light: #F7DFA0;
+    --color-sand: #FAF4E3;
+
+
+    --color-teal: #2E7D8C;
+    --color-teal-light: #5AAFBF;
+    --color-teal-pale: #D0EEF3;
+
+    --color-text-primary: #1A3A4A;
+    --color-text-on-dark: #E8F4F8;
+    --color-text-muted: #7AAABB;
+    --color-white: #ffffff;
+
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 2rem;
+
+    --border-dark: rgba(255, 255, 255, 0.08);
+    --border-light: rgba(26, 58, 74, 0.12);
+    --section-padding: 5rem;
+    --container-width: 1200px;
+}
+
+@layer base {
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: var(--font-secondary);
+        background-color: var(--color-bg-light-secondary);
+        color: var(--color-text-primary);
+        overflow-x: hidden;
+        direction: rtl;
+        -webkit-font-smoothing: antialiased;
+    }
+}
