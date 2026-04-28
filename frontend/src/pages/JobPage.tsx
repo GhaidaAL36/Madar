@@ -1,26 +1,25 @@
-import { useParams, Navigate } from "react-router-dom";
-import { useJob } from "../hooks/useJob";
+import { useParams } from "react-router-dom";
+import { useJob } from "../hooks/useJob"; /* delete when api ready */
+/* import { useJob } from "../hooks/useJobApi"; - import when api ready*/
 import Navbar from "../components/Navbar";
 import JobHeader from "../components/job/JobHeader";
 import TaskBody from "../components/job/TaskBody";
 import Footer from "../components/Footer";
 
-// Route: /jobs/:jobId
-function JobPage() {
+const JobPage = () => {
   const { jobId } = useParams<{ jobId: string }>();
   const job = useJob(jobId ?? "");
 
-  // Redirect to home if job id not found
-  if (!job) return <Navigate to="/" replace />;
+  if (!job) return null;
 
   return (
-    <div>
+    <>
       <Navbar />
       <JobHeader job={job} />
       <TaskBody tasks={job.tasks} />
       <Footer />
-    </div>
+    </>
   );
-}
+};
 
 export default JobPage;
