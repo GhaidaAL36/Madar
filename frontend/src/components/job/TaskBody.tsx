@@ -1,22 +1,30 @@
 import { useState } from "react";
 import type { Task } from "../../types/Job";
 
+const LABELS = {
+  interactiveTasks: "المهام التفاعلية",
+  willLearn: "ما ستتعلمه",
+  willDo: "ما ستفعله",
+  startTask: "ابدأ المهمة",
+} as const;
+
 interface Props {
   tasks: Task[];
 }
 
 const TaskBody = ({ tasks }: Props) => {
   const [activeTaskId, setActiveTaskId] = useState(tasks[0]?.id);
-
   const activeTask = tasks.find((t) => t.id === activeTaskId) ?? tasks[0];
 
   if (!activeTask) return null;
 
   return (
     <div dir="rtl" className="min-h-screen bg-bg-light flex">
+
       {/* Sidebar */}
       <aside className="w-55 border-l border-teal-pale bg-bg-light shrink-0 py-8 px-5 flex flex-col gap-1">
-        <p className="text-text-muted text-xs mb-4">المهام التفاعلية</p>
+        <p className="text-text-muted text-xs mb-4">{LABELS.interactiveTasks}</p>
+
         {tasks.map((task) => {
           const isActive = task.id === activeTaskId;
           return (
@@ -24,7 +32,7 @@ const TaskBody = ({ tasks }: Props) => {
               key={task.id}
               onClick={() => setActiveTaskId(task.id)}
               className={`flex flex-col items-start gap-0.5 py-3 px-3 rounded-lg cursor-pointer transition-colors ${
-                isActive ? "bg-white shadow-sm" : "hover:bg-white/60"
+                isActive ? "bg-bg-card shadow-sm" : "hover:bg-bg-card/60"
               }`}
             >
               <div className="flex items-center gap-2">
@@ -54,9 +62,10 @@ const TaskBody = ({ tasks }: Props) => {
 
       {/* Main Content */}
       <main className="flex-1 py-10 px-14 flex flex-col gap-8">
+
         {/* Header */}
         <div className="flex flex-col items-start gap-1 border-b border-teal-pale pb-6">
-          <p className="text-text-muted text-xs">المهام التفاعلية</p>
+          <p className="text-text-muted text-xs">{LABELS.interactiveTasks}</p>
           <h1 className="text-bg-dark-secondary text-4xl font-bold">
             {activeTask.fullTitle}
           </h1>
@@ -73,10 +82,11 @@ const TaskBody = ({ tasks }: Props) => {
 
         {/* Info Cards */}
         <div className="flex flex-col gap-4 max-w-130 w-full">
+
           {/* ما ستتعلمه */}
           <div className="bg-mist rounded-xl p-6">
             <h3 className="text-teal font-semibold text-sm mb-4">
-              ما ستتعلمه
+              {LABELS.willLearn}
             </h3>
             <ul className="flex flex-col gap-3">
               {activeTask.willLearn.map((item, i) => (
@@ -91,7 +101,7 @@ const TaskBody = ({ tasks }: Props) => {
           {/* ما ستفعله */}
           <div className="bg-sand rounded-xl p-6">
             <h3 className="text-gold font-semibold text-sm mb-4">
-              ما ستفعله
+              {LABELS.willDo}
             </h3>
             <ul className="flex flex-col gap-3">
               {activeTask.willDo.map((item, i) => (
@@ -106,8 +116,8 @@ const TaskBody = ({ tasks }: Props) => {
 
         {/* CTA */}
         <div className="flex justify-start mt-2">
-          <button className="bg-gold-dark hover:bg-gold-light text-white text-sm font-semibold px-8 py-4 rounded-xl transition-colors cursor-pointer">
-            ابدأ المهمة
+          <button className="bg-gold-dark hover:bg-gold text-white text-sm font-semibold px-8 py-4 rounded-xl transition-colors cursor-pointer">
+            {LABELS.startTask}
           </button>
         </div>
       </main>
