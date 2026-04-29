@@ -1,3 +1,4 @@
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import type { Task } from "../../types/Job";
 
@@ -13,6 +14,8 @@ interface Props {
 }
 
 const TaskBody = ({ tasks }: Props) => {
+  const navigate = useNavigate();
+  const { jobId } = useParams<{ jobId: string }>();
   const [activeTaskId, setActiveTaskId] = useState(tasks[0]?.id);
   const activeTask = tasks.find((t) => t.id === activeTaskId) ?? tasks[0];
 
@@ -20,10 +23,11 @@ const TaskBody = ({ tasks }: Props) => {
 
   return (
     <div dir="rtl" className="min-h-screen bg-bg-light flex">
-
       {/* Sidebar */}
       <aside className="w-55 border-l border-teal-pale bg-bg-light shrink-0 py-8 px-5 flex flex-col gap-1">
-        <p className="text-text-muted text-xs mb-4">{LABELS.interactiveTasks}</p>
+        <p className="text-text-muted text-xs mb-4">
+          {LABELS.interactiveTasks}
+        </p>
 
         {tasks.map((task) => {
           const isActive = task.id === activeTaskId;
@@ -62,7 +66,6 @@ const TaskBody = ({ tasks }: Props) => {
 
       {/* Main Content */}
       <main className="flex-1 py-10 px-14 flex flex-col gap-8">
-
         {/* Header */}
         <div className="flex flex-col items-start gap-1 border-b border-teal-pale pb-6">
           <p className="text-text-muted text-xs">{LABELS.interactiveTasks}</p>
@@ -82,7 +85,6 @@ const TaskBody = ({ tasks }: Props) => {
 
         {/* Info Cards */}
         <div className="flex flex-col gap-4 max-w-130 w-full">
-
           {/* ما ستتعلمه */}
           <div className="bg-mist rounded-xl p-6">
             <h3 className="text-teal font-semibold text-sm mb-4">
@@ -116,7 +118,10 @@ const TaskBody = ({ tasks }: Props) => {
 
         {/* CTA */}
         <div className="flex justify-start mt-2">
-          <button className="bg-gold-dark hover:bg-gold text-white text-sm font-semibold px-8 py-4 rounded-xl transition-colors cursor-pointer">
+          <button
+            className="bg-gold-dark hover:bg-gold text-white text-sm font-semibold px-8 py-4 rounded-xl transition-colors cursor-pointer"
+            onClick={() => navigate(`/jobs/${jobId}/tasks/${activeTaskId}`)}
+          >
             {LABELS.startTask}
           </button>
         </div>
