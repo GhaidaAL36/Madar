@@ -1,23 +1,28 @@
 export interface SkillRating {
   label: string;
   value: number;
-  color: "#2E7D8C" | "#C4922A";
+  color: "teal" | "gold";
 }
 
-export interface AnswerReviewBlock {
+export interface AnswerBlock {
   title: string;
   items: { text: string; correct: boolean }[];
 }
 
-export interface ReviewData {
+export interface Review {
   score: number;
-  timeMinutes: number;
-  taskIndex: number;
+  fitPercent: number;
+  fitSummary: string;
+  skills: SkillRating[];
   strengths: string[];
   improvements: string[];
   detailedFeedback: string[];
-  answerReview: AnswerReviewBlock[];
-  skills: SkillRating[];
-  fitPercent: number;
-  fitSummary: string;
+  answerReview: AnswerBlock[];
+}
+
+export interface ReviewContext {
+  review: Review;
+  jobTitleAr: string;
+  taskTitle: string;
+  taskDuration: string;
 }
