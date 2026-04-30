@@ -15,9 +15,7 @@ export interface Task {
   id: number;
   type: TaskType;
   title: string;
-  duration: string;
   fullTitle: string;
-  timeRange: string;
   description: string;
   willLearn: string[];
   willDo: string[];

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom"; // ← add this
+import { useNavigate, useParams } from "react-router-dom";
 import type { Task } from "../../types/Job";
 
 const LABELS = {
@@ -23,7 +23,6 @@ const TaskBody = ({ tasks }: Props) => {
 
   return (
     <div dir="rtl" className="min-h-screen bg-bg-light flex">
-      {/* Sidebar */}
       <aside className="w-55 border-l border-teal-pale bg-bg-light shrink-0 py-8 px-5 flex flex-col gap-1">
         <p className="text-text-muted text-xs mb-4">
           {LABELS.interactiveTasks}
@@ -53,9 +52,6 @@ const TaskBody = ({ tasks }: Props) => {
                   {task.title}
                 </span>
               </div>
-              <span className="text-[10px] text-text-muted self-start">
-                {task.duration}
-              </span>
               {isActive && (
                 <div className="w-full h-0.5 bg-bg-dark-secondary rounded-full mt-1" />
               )}
@@ -64,28 +60,18 @@ const TaskBody = ({ tasks }: Props) => {
         })}
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 py-10 px-14 flex flex-col gap-8">
-        {/* Header */}
         <div className="flex flex-col items-start gap-1 border-b border-teal-pale pb-6">
-          <p className="text-text-muted text-xs">{LABELS.interactiveTasks}</p>
           <h1 className="text-bg-dark-secondary text-4xl font-bold">
             {activeTask.fullTitle}
           </h1>
-          <div className="flex items-center gap-1 text-text-muted text-xs mt-1">
-            <span>🕐</span>
-            <span>{activeTask.timeRange}</span>
-          </div>
         </div>
 
-        {/* Description */}
         <p className="text-bg-dark-secondary text-sm leading-relaxed max-w-3xl">
           {activeTask.description}
         </p>
 
-        {/* Info Cards */}
         <div className="flex flex-col gap-4 max-w-130 w-full">
-          {/* ما ستتعلمه */}
           <div className="bg-mist rounded-xl p-6">
             <h3 className="text-teal font-semibold text-sm mb-4">
               {LABELS.willLearn}
@@ -100,7 +86,6 @@ const TaskBody = ({ tasks }: Props) => {
             </ul>
           </div>
 
-          {/* ما ستفعله */}
           <div className="bg-sand rounded-xl p-6">
             <h3 className="text-gold font-semibold text-sm mb-4">
               {LABELS.willDo}
@@ -116,11 +101,10 @@ const TaskBody = ({ tasks }: Props) => {
           </div>
         </div>
 
-        {/* CTA */}
         <div className="flex justify-start mt-2">
           <button
-            onClick={() => navigate(`/jobs/${jobId}/tasks/${activeTaskId}`)}
-            className="bg-gold-dark hover:bg-gold text-white text-sm font-semibold px-8 py-4 rounded-xl transition-colors cursor-pointer"
+            onClick={() => navigate(`/jobs/${jobId}/tasks/${activeTask.id}`)}
+            className="cursor-pointer rounded-xl bg-gold-dark px-8 py-4 text-sm font-semibold text-white transition-colors hover:bg-gold"
           >
             {LABELS.startTask}
           </button>
