@@ -16,12 +16,12 @@ function Hero() {
           <br />
           <span className="highlight">مسارك المهني</span>
           <br />
-          بالتجربة الحقيقية
+          بالتجربة
         </h1>
 
         <p className="hero-desc anim-fadeup d3">
-          جرّب مهام حقيقية من وظائف مختلفة، واكتشف أي المجالات يناسبك — قبل أن
-          تبدأ رحلتك المهنية.
+          جرّب مهام من وظائف مختلفة، واكتشف أي المجالات يناسبك قبل أن تبدأ رحلتك
+          المهنية.
         </p>
 
         <div className="hero-actions anim-fadeup d4">

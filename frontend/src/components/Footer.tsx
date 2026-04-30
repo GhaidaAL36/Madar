@@ -1,19 +1,20 @@
 function Footer() {
   return (
-    <div className="bg-bg-dark px-14 pt-13 pb-10 grid grid-cols-[2fr_1fr_1fr_1fr] gap-10 border-b border-white/[0.08]">
+    <footer className="grid grid-cols-[2fr_1fr] gap-10 border-b border-white/8 bg-bg-dark px-14 pb-10 pt-13">
       <div>
-        <div className="text-[22px] font-bold text-white mb-2">مدار</div>
-        <p className="text-[13px] leading-[1.75] text-text-muted/50 max-w-[220px]">
-          منصة تساعدك على اكتشاف المسار المهني الأنسب من خلال محاكاة مهام حقيقية
+        <div className="mb-2 text-[22px] font-bold text-white">مدار</div>
+        <p className="max-w-55 text-[13px] leading-[1.75] text-text-muted/50">
+          منصة تساعدك على اكتشاف المسار المهني الأنسب من خلال محاكاة مهام
           بالذكاء الاصطناعي.
         </p>
       </div>
+
       <div>
-        <div className="text-[13px] font-bold text-white mb-3">المنصة</div>
-        <ul className="list-none flex flex-col gap-2">
+        <div className="mb-3 text-[13px] font-bold text-white">المنصة</div>
+        <ul className="flex list-none flex-col gap-2">
           <li>
             <a
-              href="#"
+              href="#jobs"
               className="text-[13px] text-text-muted/50 no-underline transition-colors duration-200 hover:text-white"
             >
               استكشف المهن
@@ -21,7 +22,7 @@ function Footer() {
           </li>
           <li>
             <a
-              href="#"
+              href="#how"
               className="text-[13px] text-text-muted/50 no-underline transition-colors duration-200 hover:text-white"
             >
               كيف يعمل
@@ -29,7 +30,7 @@ function Footer() {
           </li>
           <li>
             <a
-              href="#"
+              href="/auth?mode=login"
               className="text-[13px] text-text-muted/50 no-underline transition-colors duration-200 hover:text-white"
             >
               تسجيل الدخول
@@ -37,8 +38,7 @@ function Footer() {
           </li>
         </ul>
       </div>
-    </div>
+    </footer>
   );
 }
-
 export default Footer;
