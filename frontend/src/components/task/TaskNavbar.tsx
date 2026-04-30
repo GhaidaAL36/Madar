@@ -1,4 +1,3 @@
-import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../../utils/timeUtils";
 
 const LABELS = {
@@ -8,16 +7,11 @@ const LABELS = {
 
 interface Props {
   timeLeft?: number;
+  onSubmit: () => void;
 }
 
-export default function TaskNavbar({ timeLeft = 872 }: Props) {
-  const navigate = useNavigate();
-  const { id, taskId } = useParams<{ id: string; taskId: string }>();
+export default function TaskNavbar({ timeLeft = 872, onSubmit }: Props) {
   const isLow = timeLeft < 120;
-
-  const handleSubmit = () => {
-    navigate(`/jobs/${id}/tasks/${taskId}/review`);
-  };
 
   return (
     <nav
@@ -43,7 +37,7 @@ export default function TaskNavbar({ timeLeft = 872 }: Props) {
 
       {/* Submit */}
       <button
-        onClick={handleSubmit}
+        onClick={onSubmit}
         className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-bold bg-gold hover:bg-gold-dark text-bg-dark transition-colors duration-200 cursor-pointer border-0"
       >
         {LABELS.submit}

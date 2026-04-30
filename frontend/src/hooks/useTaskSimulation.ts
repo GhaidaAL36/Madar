@@ -7,7 +7,8 @@ export function useTaskSimulation(jobId: string, taskId: string): SimulationTask
   if (!task) return null;
 
   return {
-    id: String(task.id), // ← convert number to string
+    id: String(task.id),
+    type: task.type, 
     title: task.title,
     description: task.description,
     expectations: [
