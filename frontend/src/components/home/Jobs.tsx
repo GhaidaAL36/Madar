@@ -5,7 +5,7 @@ import { useJobs } from "../../hooks/useJobs"; // remove when api ready
 const LABELS = {
   explore: "استكشف المهن",
   heading: "أي المجالات يناسبك؟",
-  subheading: "تصفح المهن حسب القطاع وابدأ المحاكاة في أي وقت",
+  subheading: "تصفح المهن وابدأ المحاكاة",
 } as const;
 
 function Jobs() {

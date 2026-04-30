@@ -55,7 +55,7 @@ function How() {
         </h2>
 
         <p className="text-[17px] text-bg-dark-secondary/55 max-w-120 mx-auto leading-[1.7]">
-          لا اختبارات شخصية تقليدية — فقط تجربة فعلية لمهام حقيقية
+          لا اختبارات شخصية تقليدية — تجربة فعلية للمهام
         </p>
       </div>
 
