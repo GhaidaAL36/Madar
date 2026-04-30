@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
+    /* link to hero */
     <nav className="fixed top-0 left-0 right-0 z-100 px-12 h-16 flex items-center justify-between bg-bg-dark backdrop-blur-md border-b border-white/8">
-      {/* Logo */}
       <div className="flex items-baseline gap-2.5">
         <Link
           to={"/#hero"}
@@ -12,11 +12,11 @@ function Navbar() {
           مدار
         </Link>
         <span className="text-sm font-light text-text-muted tracking-[0.06em]">
-          MDAR
+          MADAR
         </span>
       </div>
 
-      {/* Links */}
+      {/* links to jobs and how it works */}
       <ul className="flex items-center gap-8 list-none">
         <li>
           <Link
@@ -37,7 +37,7 @@ function Navbar() {
         </li>
       </ul>
 
-      {/* CTA Buttons */}
+      {/* login/singup btns */}
       <div className="flex items-center gap-3">
         <Link
           to="/auth?mode=login"
@@ -50,7 +50,7 @@ function Navbar() {
           to="/auth?mode=signup"
           className="text-[13px] font-bold text-bg-dark no-underline px-5 py-2 rounded-md bg-gold transition-colors duration-200 hover:bg-gold-light"
         >
-          ابدأ مجاناً
+          إنشاء حساب
         </Link>
       </div>
     </nav>
