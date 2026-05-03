@@ -1,4 +1,8 @@
-export type TaskType = "write-code" | "fix-code" | "clean-code" | "analyze-data";
+export type CodeTaskType = "write-code" | "fix-code" | "clean-code";
+export type DataTaskType = "analyze-data";
+export type PMTaskType   = "review-comments" | "review-document" | "ux-problem" | "stakeholder-notes";
+
+export type TaskType = CodeTaskType | DataTaskType | PMTaskType;
 
 export interface Job {
   id: string;
