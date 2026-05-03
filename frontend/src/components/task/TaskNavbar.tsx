@@ -1,49 +1,26 @@
-import { formatTime } from "../../utils/timeUtils";
-
 const LABELS = {
-  brand:  "مدار",
+  brand: "مدار",
   submit: "إرسال",
 } as const;
 
 interface Props {
-  timeLeft?: number;
   onSubmit: () => void;
 }
 
-export default function TaskNavbar({ timeLeft = 872, onSubmit }: Props) {
-  const isLow = timeLeft < 120;
-
+export default function TaskNavbar({ onSubmit }: Props) {
   return (
-    <nav
-      dir="rtl"
-      className="w-full flex items-center justify-between px-6 py-3 bg-bg-dark-secondary"
-    >
-      {/* Brand */}
+    <nav className="flex w-full items-center justify-between bg-bg-dark-secondary px-6 py-3">
       <span className="text-xl font-bold tracking-wide text-text-on-dark">
         {LABELS.brand}
       </span>
 
-      {/* Timer */}
-      <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-        isLow
-          ? "bg-red-500/15 text-red-400 border-red-500/40"
-          : "bg-white/8 text-text-on-dark border-white/15"
-      }`}>
-        <span className={`w-2 h-2 rounded-full ${
-          isLow ? "bg-red-400 shadow-[0_0_6px_#FF6B6B]" : "bg-green-400 shadow-[0_0_6px_#4ADE80]"
-        }`} />
-        {formatTime(timeLeft)}
-      </div>
-
-      {/* Submit */}
       <button
+        type="button"
         onClick={onSubmit}
-        className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-bold bg-gold hover:bg-gold-dark text-bg-dark transition-colors duration-200 cursor-pointer border-0"
+        className="flex cursor-pointer items-center gap-2 rounded-lg border-0 bg-gold px-5 py-2 text-sm font-bold text-bg-dark transition-colors duration-200 hover:bg-gold-dark"
       >
         {LABELS.submit}
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7" />
-        </svg>
+        <i className="fa-solid fa-arrow-left" aria-hidden="true" />
       </button>
     </nav>
   );
