@@ -8,7 +8,7 @@ import HintsPanel from "./HintsPanel";
 import OutputPanel from "./OutputPanel";
 
 const LABELS = {
-  run: "▶ تشغيل",
+  run: "تشغيل",
   running: "جارٍ التشغيل...",
   submit: "إرسال",
   filename: "solution.py",
@@ -35,7 +35,6 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
   const [output, setOutput] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
 
-  // Reset when task type changes
   useEffect(() => {
     setCode(codeTaskData.starterCode);
     setOutput(null);
@@ -51,26 +50,16 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
 
   return (
     <div className="flex flex-col flex-1 h-full bg-bg-dark overflow-hidden">
-      {/* Instructions bar */}
-      <div
-        dir="rtl"
-        className="flex items-start gap-4 px-5 py-4 border-b border-white/8 shrink-0"
-      >
+      <div className="flex items-start gap-4 px-5 py-4 border-b border-white/8 shrink-0">
         <span
           className={`text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 mt-0.5 ${LABELS.typeBadgeColor[taskType]}`}
         >
           {LABELS.typeBadge[taskType]}
         </span>
-        <p className="text-[13px] text-text-muted leading-relaxed flex-1">
-          {codeTaskData.instructions}
-        </p>
       </div>
 
-      {/* Editor + Output */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Editor panel */}
         <div className="flex flex-col flex-1 overflow-hidden">
-          {/* Toolbar */}
           <div className="flex items-center justify-between px-4 py-2 bg-bg-dark border-b border-white/8 shrink-0">
             <span className="text-[11px] text-text-muted font-mono">
               {LABELS.filename}
@@ -79,7 +68,7 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
               <button
                 onClick={handleRun}
                 disabled={running}
-                className="flex items-center gap-1.5 bg-teal hover:bg-teal/80 disabled:opacity-50 text-white text-[12px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer border-0 disabled:cursor-not-allowed"
+                className="flex items-center gap-1.5 bg-gold-dark hover:bg-gold/80 disabled:opacity-50 text-white text-[12px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer border-0 disabled:cursor-not-allowed"
               >
                 {running ? LABELS.running : LABELS.run}
               </button>
@@ -88,23 +77,10 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
                 className="flex items-center gap-1.5 bg-accent hover:bg-accent-hover text-bg-dark text-[12px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer border-0"
               >
                 {LABELS.submit}
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
               </button>
             </div>
           </div>
 
-          {/* Monaco */}
           <div className="flex-1 overflow-hidden" dir="ltr">
             <Editor
               height="100%"
@@ -128,11 +104,9 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
           </div>
         </div>
 
-        {/* Output panel */}
         <OutputPanel output={output} running={running} />
       </div>
 
-      {/* Hints */}
       <HintsPanel hints={codeTaskData.hints} />
     </div>
   );
