@@ -1,7 +1,6 @@
 // delete when api
 import type { ReviewContext } from "../types/Review";
 
-// TODO: swap with useReviewApi when backend is ready
 export function useReview(jobId: string, taskId: number): ReviewContext {
   return {
     jobTitleAr: "مهندس برمجيات",

@@ -1,9 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useTaskSimulation } from "../hooks/useTaskSimulation";
 import { useState } from "react";
+import type { CodeTaskType } from "../types/CodeTask";
+import { useTaskSimulation } from "../hooks/useTaskSimulation";
 import TaskNavbar from "../components/task/TaskNavbar";
 import TaskDetails from "../components/task/TaskDetails";
 import CodeTask from "../components/task/Software Engineer/CodeTask";
+import DataTask from "../components/task/Data-Scientist/DataTask";
 import ConfirmModal from "../components/task/ConfirmModal";
 
 export default function TaskSimulationPage() {
@@ -28,7 +30,16 @@ export default function TaskSimulationPage() {
       case "write-code":
       case "fix-code":
       case "clean-code":
-        return <CodeTask taskType={task.type} onSubmit={handleSubmitRequest} />;
+        return (
+          <CodeTask
+            taskType={task.type as CodeTaskType}
+            onSubmit={handleSubmitRequest}
+          />
+        );
+
+      case "analyze-data":
+        return <DataTask />;
+
       default:
         return (
           <div className="flex-1 flex items-center justify-center">
@@ -43,12 +54,11 @@ export default function TaskSimulationPage() {
       {showConfirm && (
         <ConfirmModal onConfirm={handleConfirm} onCancel={handleCancel} />
       )}
-
       <div className="flex flex-col h-screen bg-bg-dark">
         <TaskNavbar onSubmit={handleSubmitRequest} />
-        <div className="flex flex-1 overflow-hidden flex-row-reverse">
-          {renderTaskArea()}
+        <div className="flex flex-1 overflow-hidden ">
           <TaskDetails task={task} />
+          {renderTaskArea()}
         </div>
       </div>
     </>

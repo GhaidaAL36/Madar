@@ -4,7 +4,7 @@ import type {
   SimulationTask,
   TaskExpectation,
   EvaluationCriterion,
-} from "../../types/SimulationTask";
+} from "@/types/SimulationTask";
 
 const LABELS = {
   panelTitle: "تفاصيل المهمة",

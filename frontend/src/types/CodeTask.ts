@@ -1,4 +1,5 @@
 import type { TaskType } from "./Job";
+export type CodeTaskType = "write-code" | "fix-code" | "clean-code";
 
 export interface CodeTaskData {
   taskType: TaskType;

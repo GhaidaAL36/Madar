@@ -9,7 +9,6 @@ interface UseCodeTaskResult {
   error: string | null;
 }
 
-// TODO: swap import in CodeTask.tsx when backend is ready
 export function useCodeTask(jobId: string, taskId: string, taskType: TaskType): UseCodeTaskResult {
   const [codeTask, setCodeTask] = useState<CodeTaskData | null>(null);
   const [loading, setLoading]   = useState(true);

@@ -141,7 +141,7 @@ export const jobs: Job[] = [
     tasks: [
       {
         id: 1,
-        type: "fix-code",
+        type: "analyze-data",
         title: "تنظيف البيانات",
         duration: "20 د",
         fullTitle: "تنظيف مجموعة بيانات حقيقية",
@@ -161,7 +161,7 @@ export const jobs: Job[] = [
       },
       {
         id: 2,
-        type: "fix-code",
+        type: "analyze-data", 
         title: "بناء نموذج",
         duration: "30 د",
         fullTitle: "بناء نموذج تنبؤي بسيط",

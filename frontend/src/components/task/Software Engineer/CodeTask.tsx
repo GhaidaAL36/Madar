@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
-import type { TaskType } from "../../../types/Job";
-import { useCodeTask } from "../../../hooks/useCodeTask"; // remove when api
+import type { CodeTaskType } from "@/types/CodeTask";
+import { useCodeTask } from "@/hooks/useCodeTask"; // remove when api
 // import { useCodeTask } from "../hooks/useCodeTaskApi"; - when api
-import { simulateRun } from "../../../utils/codeRunner";
+import { simulateRun } from "@/utils/codeRunner";
 import HintsPanel from "../HintsPanel";
 import OutputPanel from "./OutputPanel";
 
@@ -16,7 +16,7 @@ const LABELS = {
     "write-code": "كتابة كود",
     "fix-code": "تصحيح كود",
     "clean-code": "تنظيف كود",
-  },
+  } as Record<CodeTaskType, string>,
   typeBadgeColor: {
     "write-code": "bg-teal/15 text-teal border-teal/25",
     "fix-code": "bg-red-500/10 text-red-400 border-red-400/25",
@@ -25,7 +25,7 @@ const LABELS = {
 } as const;
 
 interface Props {
-  taskType: TaskType;
+  taskType: CodeTaskType;
   onSubmit: () => void;
 }
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { LoginPayload, SignupPayload } from "../services/authService";
 
-// TODO: swap with useAuthApi when backend is ready
 export function useAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
