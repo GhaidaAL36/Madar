@@ -1,3 +1,4 @@
+// I will delete it when api
 import type { SimulationTask } from "../types/SimulationTask";
 import { jobs } from "../data/jobsData";
 
@@ -10,7 +11,7 @@ export function useTaskSimulation(jobId: string, taskId: string): SimulationTask
     id: String(task.id),
     type: task.type, 
     title: task.title,
-    description: task.description,
+    fullDescription: task.description,
     expectations: [
       { id: "1", label: "تحديد نوع الخطأ (منطقي / نحوي / وقت تشغيل)", completed: true  },
       { id: "2", label: "تحديد السطر الذي يحتوي الخطأ بدقة",           completed: true  },

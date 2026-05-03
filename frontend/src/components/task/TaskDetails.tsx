@@ -1,16 +1,18 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
-import type { SimulationTask, TaskExpectation, EvaluationCriterion } from "../../types/SimulationTask";
+import type {
+  SimulationTask,
+  TaskExpectation,
+  EvaluationCriterion,
+} from "../../types/SimulationTask";
 
 const LABELS = {
-  panelTitle:       "تفاصيل المهمة",
-  taskSection:      "المهمة",
-  expectSection:    "ما يُتوقع منك",
-  criteriaSection:  "معايير التقييم",
-  progress:         "التقدم",
+  panelTitle: "تفاصيل المهمة",
+  taskSection: "المهمة",
+  expectSection: "ما يُتوقع منك",
+  criteriaSection: "معايير التقييم",
+  progress: "التقدم",
 } as const;
-
-// ── SectionCard ──────────────────────────────────────────────────────────────
 
 interface SectionCardProps {
   title: string;
@@ -19,7 +21,12 @@ interface SectionCardProps {
   defaultOpen?: boolean;
 }
 
-function SectionCard({ title, icon, children, defaultOpen = true }: SectionCardProps) {
+function SectionCard({
+  title,
+  icon,
+  children,
+  defaultOpen = true,
+}: SectionCardProps) {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
@@ -32,15 +39,7 @@ function SectionCard({ title, icon, children, defaultOpen = true }: SectionCardP
           <span className="text-teal">{icon}</span>
           <span className="text-sm font-bold text-text-primary">{title}</span>
         </div>
-        <svg
-          width="14" height="14" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" strokeWidth="2.5"
-          strokeLinecap="round" strokeLinejoin="round"
-          className="text-text-muted transition-transform duration-200"
-          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
-        >
-          <path d="M6 9l6 6 6-6" />
-        </svg>
+        <i className={`fa-solid ${open ? "fa-angle-up" : "fa-angle-down"}`} />
       </button>
 
       {open && (
@@ -52,28 +51,40 @@ function SectionCard({ title, icon, children, defaultOpen = true }: SectionCardP
   );
 }
 
-// ── ExpectationItem ──────────────────────────────────────────────────────────
+interface ExpectationItemProps {
+  exp: TaskExpectation;
+  onToggle: (id: string) => void;
+}
 
-function ExpectationItem({ exp }: { exp: TaskExpectation }) {
+function ExpectationItem({ exp, onToggle }: ExpectationItemProps) {
   return (
-    <li className="flex items-start gap-2.5">
-      <span className={`mt-0.5 shrink-0 w-4 h-4 rounded flex items-center justify-center border-[1.5px] transition-colors ${
-        exp.completed ? "bg-teal border-teal" : "bg-transparent border-teal-pale"
-      }`}>
+    <li
+      className="flex items-start gap-2.5 cursor-pointer group"
+      onClick={() => onToggle(exp.id)}
+    >
+      <span
+        className={`mt-0.5 shrink-0 w-4 h-4 rounded flex items-center justify-center border-[1.5px] transition-colors group-hover:border-teal ${
+          exp.completed
+            ? "bg-teal border-teal"
+            : "bg-transparent border-teal-pale"
+        }`}
+      >
         {exp.completed && (
-          <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-            <path d="M2 6l3 3 5-5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <i className="fa-solid fa-check text-white text-[8px]" />
         )}
       </span>
-      <span className={`text-xs leading-relaxed ${exp.completed ? "text-text-primary" : "text-text-muted"}`}>
+      <span
+        className={`text-xs leading-relaxed select-none ${
+          exp.completed
+            ? "text-text-primary line-through opacity-60"
+            : "text-text-muted"
+        }`}
+      >
         {exp.label}
       </span>
     </li>
   );
 }
-
-// ── CriterionItem ────────────────────────────────────────────────────────────
 
 function CriterionItem({ criterion }: { criterion: EvaluationCriterion }) {
   return (
@@ -84,88 +95,79 @@ function CriterionItem({ criterion }: { criterion: EvaluationCriterion }) {
   );
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
-
 interface Props {
   task: SimulationTask;
 }
 
 export default function TaskDetails({ task }: Props) {
-  const completed = task.expectations.filter((e) => e.completed).length;
-  const total     = task.expectations.length;
-  const progress  = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const [expectations, setExpectations] = useState<TaskExpectation[]>(
+    task.expectations.map((e) => ({ ...e, completed: false })),
+  );
+
+  const toggle = (id: string) => {
+    setExpectations((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, completed: !e.completed } : e)),
+    );
+  };
+
+  const completed = expectations.filter((e) => e.completed).length;
+  const total = expectations.length;
+  const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return (
     <aside
-      dir="rtl"
       className="flex flex-col gap-4 h-full overflow-y-auto p-4 bg-bg-light"
       style={{ width: "320px", minWidth: "280px" }}
     >
-      {/* Panel heading */}
       <div className="flex items-center justify-end gap-2 pt-1 pb-1">
         <span className="text-sm font-bold tracking-wide text-text-muted">
           {LABELS.panelTitle}
         </span>
       </div>
 
-      {/* Task Card */}
       <SectionCard
         title={LABELS.taskSection}
-        icon={
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="3" />
-            <path d="M9 12l2 2 4-4" />
-          </svg>
-        }
+        icon={<i className="fa-regular fa-square-check" />}
       >
         <h2 className="text-base font-bold mt-2 mb-1 leading-snug text-text-primary">
           {task.title}
         </h2>
         <p className="text-xs leading-relaxed text-text-muted">
-          {task.description}
+          {task.fullDescription}
         </p>
       </SectionCard>
 
-      {/* Expectations Card */}
       <SectionCard
         title={LABELS.expectSection}
-        icon={
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 11l3 3L22 4" />
-            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-          </svg>
-        }
+        icon={<i className="fa-solid fa-list-check" />}
       >
         <ul className="flex flex-col gap-2.5 mt-2">
-          {task.expectations.map((exp) => (
-            <ExpectationItem key={exp.id} exp={exp} />
+          {expectations.map((exp) => (
+            <ExpectationItem key={exp.id} exp={exp} onToggle={toggle} />
           ))}
         </ul>
 
-        {/* Progress */}
         <div className="mt-4">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-semibold text-teal">{LABELS.progress}</span>
-            <span className="text-xs text-text-muted">{total} / {completed}</span>
+            <span className="text-xs font-semibold text-teal">
+              {LABELS.progress}
+            </span>
+            <span className="text-xs text-text-muted">
+              {completed} / {total}
+            </span>
           </div>
           <div className="w-full h-1.25 rounded-full overflow-hidden bg-bg-card-secondary">
             <div
-              className="h-full rounded-full bg-teal transition-all duration-500"
+              className="h-full rounded-full bg-gold transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
         </div>
       </SectionCard>
 
-      {/* Evaluation Criteria Card */}
       <SectionCard
         title={LABELS.criteriaSection}
-        icon={
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 16v-4M12 8h.01" />
-          </svg>
-        }
+        icon={<i className="fa-solid fa-list-ul" />}
       >
         <ul className="flex flex-col gap-2 mt-2">
           {task.evaluationCriteria.map((criterion) => (

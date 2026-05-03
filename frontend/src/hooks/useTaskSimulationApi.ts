@@ -8,7 +8,6 @@ interface UseTaskSimulationResult {
   error: string | null;
 }
 
-// TODO: swap import in TaskSimulationPage when backend is ready
 export function useTaskSimulation(jobId: string, taskId: string): UseTaskSimulationResult {
   const [task, setTask]       = useState<SimulationTask | null>(null);
   const [loading, setLoading] = useState(true);

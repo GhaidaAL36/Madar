@@ -15,7 +15,7 @@ export interface SimulationTask {
   id: string;
   type: TaskType;
   title: string;
-  description: string;
+  fullDescription: string;
   expectations: TaskExpectation[];
   evaluationCriteria: EvaluationCriterion[];
 }
