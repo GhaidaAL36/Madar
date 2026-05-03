@@ -3,7 +3,7 @@ import { useTaskSimulation } from "../hooks/useTaskSimulation";
 import { useState } from "react";
 import TaskNavbar from "../components/task/TaskNavbar";
 import TaskDetails from "../components/task/TaskDetails";
-import CodeTask from "../components/task/CodeTask";
+import CodeTask from "../components/task/Software Engineer/CodeTask";
 import ConfirmModal from "../components/task/ConfirmModal";
 
 export default function TaskSimulationPage() {
@@ -12,7 +12,7 @@ export default function TaskSimulationPage() {
   const task = useTaskSimulation(id ?? "", taskId ?? "");
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleSubmitRequest = () => setShowConfirm(true); // ← open modal
+  const handleSubmitRequest = () => setShowConfirm(true);
   const handleConfirm = () => navigate(`/jobs/${id}/tasks/${taskId}/review`);
   const handleCancel = () => setShowConfirm(false);
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
-import type { TaskType } from "../../types/Job";
-import { useCodeTask } from "../../hooks/useCodeTask"; // remove when api
+import type { TaskType } from "../../../types/Job";
+import { useCodeTask } from "../../../hooks/useCodeTask"; // remove when api
 // import { useCodeTask } from "../hooks/useCodeTaskApi"; - when api
-import { simulateRun } from "../../utils/codeRunner";
-import HintsPanel from "./HintsPanel";
+import { simulateRun } from "../../../utils/codeRunner";
+import HintsPanel from "../HintsPanel";
 import OutputPanel from "./OutputPanel";
 
 const LABELS = {
