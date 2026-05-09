@@ -11,7 +11,7 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     authService.login(payload)
-      .then(() => navigate("/"))
+      .then(() => navigate("/profile"))
       .catch(() => setError("البريد الإلكتروني أو كلمة المرور غير صحيحة"))
       .finally(() => setLoading(false));
   };
@@ -20,7 +20,7 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     authService.signup(payload)
-      .then(() => navigate("/"))
+      .then(() => navigate("/profile"))
       .catch(() => setError("فشل إنشاء الحساب، حاول مرة أخرى"))
       .finally(() => setLoading(false));
   };
