@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useAuthMode } from "../../hooks/useAuthMode"; // delete when api ready
-import { useAuth } from "../../hooks/useAuth"; // delete when api ready
-// import { useAuth } from "../../hooks/useAuthApi"; - when api ready
-// import { useAuthMode } from "../../hooks/useAuthModeApi"; - when api ready
+import { useAuthMode } from "../../hooks/useAuthMode"; 
+import { useAuth } from "../../hooks/useAuthApi"; 
 import AuthTabs from "./AuthTabs";
 import InputField from "./InputField";
 
