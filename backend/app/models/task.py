@@ -10,6 +10,8 @@ class Task(db.Model):
     type = db.Column(db.String(50), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     full_title = db.Column(db.String(300), nullable=False)
+    duration = db.Column(db.String(20), nullable=False)
+    time_range = db.Column(db.String(50), nullable=False)
     description = db.Column(db.Text, nullable=False)
     will_learn = db.Column(db.JSON, nullable=False)
     will_do = db.Column(db.JSON, nullable=False)
