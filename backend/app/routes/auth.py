@@ -12,8 +12,9 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
+    raw = request.get_json()
     try:
-        data = SignupSchema().load(request.get_json())
+        data = SignupSchema().load(raw)
     except ValidationError as e:
         return bad_request(str(e.messages))
 
