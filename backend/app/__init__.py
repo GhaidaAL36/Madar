@@ -26,12 +26,14 @@ def create_app():
         db.create_all()
 
     # routes
-    from .routes.auth import auth_bp
+        from .routes.auth import auth_bp
+        app.register_blueprint(auth_bp, url_prefix="/api/auth")
+        
+        from .routes.profile import profile_bp
+        app.register_blueprint(profile_bp, url_prefix="/api/profile")
 
-    app.register_blueprint(auth_bp, url_prefix="/api/auth")
+        @app.route("/api/health")
+        def health():
+            return {"status": "ok"}
 
-    @app.route("/api/health")
-    def health():
-        return {"status": "ok"}
-
-    return app
+        return app
