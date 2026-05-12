@@ -28,16 +28,17 @@ def create_app():
     # routes
         from .routes.auth import auth_bp
         app.register_blueprint(auth_bp, url_prefix="/api/auth")
-        
+
         from .routes.profile import profile_bp
         app.register_blueprint(profile_bp, url_prefix="/api/profile")
-        
-       from .routes.jobs import jobs_bp
+
+        from .routes.jobs import jobs_bp
         app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
+
         from .routes.admin import admin_bp
         app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
-        @app.route("/")
+        @app.route("/api/health")
         def health():
             return {"status": "ok"}
 

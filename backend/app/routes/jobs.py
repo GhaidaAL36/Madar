@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required
-from ..models.job import Job
+from ..models import Job
 
 jobs_bp = Blueprint("jobs", __name__)
 
