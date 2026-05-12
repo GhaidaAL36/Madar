@@ -31,6 +31,9 @@ def create_app():
         
         from .routes.profile import profile_bp
         app.register_blueprint(profile_bp, url_prefix="/api/profile")
+        
+        from .routes.jobs import jobs_bp
+        app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
 
         @app.route("/api/health")
         def health():
