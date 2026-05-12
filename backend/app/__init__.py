@@ -34,6 +34,9 @@ def create_app():
 
         from .routes.jobs import jobs_bp
         app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
+        
+        from .routes.tasks import tasks_bp
+        app.register_blueprint(tasks_bp, url_prefix="/api/jobs/<string:job_id>/tasks")
 
         from .routes.admin import admin_bp
         app.register_blueprint(admin_bp, url_prefix="/api/admin")
