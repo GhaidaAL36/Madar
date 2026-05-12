@@ -4,7 +4,7 @@ import type { Profile, Simulation } from "../types/profile";
 
 interface UseProfileResult {
   user: { name: string; email: string; initials: string };
-  interests: string[];
+  profileInterests: string[]; 
   simulations: Simulation[];
   loading: boolean;
   error: string | null;
@@ -37,7 +37,7 @@ export function useProfile(): UseProfileResult {
           .toUpperCase()
         : "",
     },
-    interests: profile?.interests ?? [],
+    profileInterests: profile?.interests ?? [], 
     simulations: profile?.simulations ?? [],
     loading,
     error,
