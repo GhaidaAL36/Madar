@@ -32,7 +32,7 @@ def create_app():
         from .routes.profile import profile_bp
         app.register_blueprint(profile_bp, url_prefix="/api/profile")
 
-        @app.route("/api/health")
+        @app.route("/")
         def health():
             return {"status": "ok"}
 
