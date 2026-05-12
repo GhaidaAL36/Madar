@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useProfile } from "../hooks/useProfile"; // remove when api
-// import { useProfile } from "../hooks/useProfileApi"; - when api
+import { useProfile } from "../hooks/useProfileApi";
+import { profileService } from "../services/profileService";
 import type { Simulation } from "../types/profile";
+import { AVAILABLE_INTERESTS } from "../store/interests";
 
 const LABELS = {
   editProfile: "تعديل الملف",
@@ -29,7 +31,6 @@ const SimulationCard = ({ sim }: { sim: Simulation }) => {
           {sim.job}
         </span>
       </div>
-
       <div className="flex items-center gap-3">
         <div className="w-28 h-2 bg-bg-card rounded-full overflow-hidden">
           <div
@@ -37,10 +38,7 @@ const SimulationCard = ({ sim }: { sim: Simulation }) => {
             style={{ width: `${sim.match}%`, background: color }}
           />
         </div>
-        <span
-          className="text-[14px] font-bold w-10 text-left"
-          style={{ color }}
-        >
+        <span className="text-[14px] font-bold w-10 text-left" style={{ color }}>
           {sim.match}%
         </span>
       </div>
@@ -49,13 +47,42 @@ const SimulationCard = ({ sim }: { sim: Simulation }) => {
 };
 
 function ProfilePage() {
-  const { user, interests, simulations } = useProfile();
+  const { user, profileInterests, simulations, loading, error } = useProfile();
+  const [interests, setInterests] = useState<string[]>([]);
+  const [showPicker, setShowPicker] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setInterests(profileInterests);
+    }
+  }, [loading]);
+
+  const available = AVAILABLE_INTERESTS.filter((i) => !interests.includes(i));
+
+  const handleAdd = async (tag: string) => {
+    const updated = [...interests, tag];
+    setInterests(updated);
+    setShowPicker(false);
+    setSaving(true);
+    await profileService.updateInterests(updated).finally(() => setSaving(false));
+  };
+
+  const handleRemove = async (tag: string) => {
+    const updated = interests.filter((i) => i !== tag);
+    setInterests(updated);
+    await profileService.updateInterests(updated);
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-text-muted">جارٍ التحميل...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
 
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-bg-light-secondary pt-24 pb-16 px-6">
         <div className="max-w-215 mx-auto flex flex-col gap-10">
+
           {/* Profile Card */}
           <div className="bg-bg-dark text-text-on-dark rounded-3xl px-8 py-8 flex items-center justify-between shadow-[0_20px_60px_rgba(15,37,48,0.25)]">
             <div className="flex items-center gap-5">
@@ -64,9 +91,7 @@ function ProfilePage() {
               </div>
               <div>
                 <div className="text-[20px] font-bold mb-1">{user.name}</div>
-                <div className="text-[14px] text-text-on-dark/70">
-                  {user.email}
-                </div>
+                <div className="text-[14px] text-text-on-dark/70">{user.email}</div>
               </div>
             </div>
             <button className="text-[13px] font-bold text-text-on-dark/80 bg-white/10 border border-white/15 rounded-[10px] px-5 py-2 transition-all duration-200 hover:bg-white/20 hover:text-text-on-dark">
@@ -75,7 +100,7 @@ function ProfilePage() {
           </div>
 
           {/* Interests */}
-          <div className="bg-bg-card rounded-[20px] px-8 py-7 shadow-[0_8px_24px_rgba(26,58,74,0.06)]">
+          <div className="bg-bg-card rounded-[20px] px-8 py-7 shadow-[0_8px_24px_rgba(26,58,74,0.06)] relative">
             <div className="text-[13px] font-bold text-bg-dark-secondary mb-5 uppercase tracking-[0.08em]">
               {LABELS.interests}
             </div>
@@ -83,15 +108,42 @@ function ProfilePage() {
               {interests.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[13px] font-medium text-teal bg-bg-card-secondary rounded-full px-4 py-1.5 cursor-pointer transition-all duration-200 hover:bg-teal hover:text-white"
+                  className="flex items-center gap-1.5 text-[13px] font-medium text-teal bg-bg-card-secondary rounded-full px-4 py-1.5"
                 >
                   {tag}
+                  <button
+                    onClick={() => handleRemove(tag)}
+                    className="text-text-muted hover:text-red-400 transition-colors leading-none"
+                  >
+                    ×
+                  </button>
                 </span>
               ))}
-              <button className="text-[13px] font-medium text-text-muted border border-dashed border-teal-pale rounded-full px-4 py-1.5 transition-all duration-200 hover:border-teal hover:text-teal">
-                {LABELS.addInterest}
+              <button
+                onClick={() => setShowPicker((v) => !v)}
+                className="text-[13px] font-medium text-text-muted border border-dashed border-teal-pale rounded-full px-4 py-1.5 transition-all duration-200 hover:border-teal hover:text-teal"
+              >
+                {saving ? "..." : LABELS.addInterest}
               </button>
             </div>
+
+            {showPicker && (
+              <div className="absolute z-10 mt-2 bg-bg-card border border-teal-pale rounded-xl shadow-lg p-4 flex flex-wrap gap-2 max-w-sm">
+                {available.length === 0 ? (
+                  <span className="text-xs text-text-muted">لا توجد اهتمامات أخرى</span>
+                ) : (
+                  available.map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => handleAdd(tag)}
+                      className="text-[13px] font-medium text-text-muted bg-bg-card-secondary rounded-full px-4 py-1.5 hover:bg-teal hover:text-white transition-colors"
+                    >
+                      {tag}
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* Simulation History */}
@@ -105,6 +157,7 @@ function ProfilePage() {
               ))}
             </div>
           </div>
+
         </div>
       </div>
       <Footer />

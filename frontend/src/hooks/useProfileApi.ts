@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { profileService } from "../services/profileService";
-import type { Profile } from "../types/profile";
+import type { Profile, Simulation } from "../types/profile";
 
 interface UseProfileResult {
-  profile: Profile | null;
+  user: { name: string; email: string; initials: string };
+  profileInterests: string[]; 
+  simulations: Simulation[];
   loading: boolean;
   error: string | null;
 }
@@ -16,10 +18,28 @@ export function useProfile(): UseProfileResult {
   useEffect(() => {
     profileService
       .getProfile()
-      .then(setProfile)
+      .then((data) => {
+        setProfile(data);
+      })
       .catch(() => setError("فشل تحميل الملف الشخصي"))
       .finally(() => setLoading(false));
   }, []);
 
-  return { profile, loading, error };
+  return {
+    user: {
+      name: profile?.name ?? "",
+      email: profile?.email ?? "",
+      initials: profile?.name
+        ? profile.name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+        : "",
+    },
+    profileInterests: profile?.interests ?? [], 
+    simulations: profile?.simulations ?? [],
+    loading,
+    error,
+  };
 }
