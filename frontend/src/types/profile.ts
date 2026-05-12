@@ -1,9 +1,3 @@
-export interface User {
-  name: string;
-  email: string;
-  initials: string;
-}
-
 export interface Simulation {
   icon: string;
   job: string;
@@ -11,7 +5,9 @@ export interface Simulation {
 }
 
 export interface Profile {
-  user: User;
+  userId: string;
+  name: string;
+  email: string;
   interests: string[];
   simulations: Simulation[];
 }

@@ -1,7 +1,6 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useProfile } from "../hooks/useProfile"; // remove when api
-// import { useProfile } from "../hooks/useProfileApi"; - when api
+import { useProfile } from "../hooks/useProfileApi";
 import type { Simulation } from "../types/profile";
 
 const LABELS = {
@@ -49,7 +48,10 @@ const SimulationCard = ({ sim }: { sim: Simulation }) => {
 };
 
 function ProfilePage() {
-  const { user, interests, simulations } = useProfile();
+  const { user, interests, simulations, loading, error } = useProfile();
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-text-muted">جارٍ التحميل...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
 
   return (
     <>
