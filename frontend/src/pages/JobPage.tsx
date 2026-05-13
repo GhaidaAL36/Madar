@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useJob } from "../hooks/useJob"; /* delete when api ready */
-/* import { useJob } from "../hooks/useJobApi"; - import when api ready*/
+import { useJob } from "../hooks/useJobApi"; 
 import { useTasks } from "../hooks/useTasks"; // delete when api
 /* import { useTasks } from "../hooks/useTasksApi"; - when api is ready*/
 import Navbar from "../components/Navbar";
