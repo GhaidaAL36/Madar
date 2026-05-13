@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { useJobs } from "../../hooks/useJobs"; // remove when api ready
-// import { useJobs } from "../../hooks/useJobsApi"; - import when api ready
+import { useJobs } from "../../hooks/useJobsApi";
 
 const LABELS = {
   explore: "استكشف المهن",
@@ -9,7 +8,10 @@ const LABELS = {
 } as const;
 
 function Jobs() {
-  const jobs = useJobs();
+    const { jobs, loading, error } = useJobs(); // ← destructure correctly
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-text-muted">جارٍ التحميل...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
 
   return (
     <section className="bg-bg-light px-20 py-25" id="jobs">
