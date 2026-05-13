@@ -32,16 +32,16 @@ def create_app():
         from .routes.profile import profile_bp
         app.register_blueprint(profile_bp, url_prefix="/api/profile")
 
-        from .routes.jobs import jobs_bp
+        from .routes.jobs import jobs_bp  # ← missing!
         app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
-        
+
         from .routes.tasks import tasks_bp
-        app.register_blueprint(tasks_bp, url_prefix="/api/jobs/<string:job_id>/tasks")
+        app.register_blueprint(tasks_bp, url_prefix="/api/jobs")
 
         from .routes.admin import admin_bp
         app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
-        @app.route("/api/health")
+        @app.route("/")
         def health():
             return {"status": "ok"}
 
