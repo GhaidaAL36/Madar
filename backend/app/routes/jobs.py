@@ -3,7 +3,7 @@ from ..models import Job
 
 jobs_bp = Blueprint("jobs", __name__)
 
-@jobs_bp.route("/", methods=["GET"])
+@jobs_bp.route("/", methods=["GET"], strict_slashes=False)
 def get_jobs():
     try:
         jobs = Job.query.all()
@@ -19,7 +19,7 @@ def get_jobs():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@jobs_bp.route("/<job_id>", methods=["GET"])
+@jobs_bp.route("/<job_id>", methods=["GET", "OPTIONS"])
 def get_job(job_id):
     job = Job.query.get(job_id)
     if not job:

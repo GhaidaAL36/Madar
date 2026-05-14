@@ -14,35 +14,31 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
-    CORS(
-        app,
-        resources={
-            r"/api/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}
-        },
-    )
+
+    CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
+
     from .models import User, Profile, Job, Task, Simulation, Submission, Review
 
     with app.app_context():
         db.create_all()
 
-    # routes
         from .routes.auth import auth_bp
         app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
         from .routes.profile import profile_bp
         app.register_blueprint(profile_bp, url_prefix="/api/profile")
 
-        from .routes.jobs import jobs_bp  # ← missing!
+        from .routes.jobs import jobs_bp
         app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
 
         from .routes.tasks import tasks_bp
-        app.register_blueprint(tasks_bp, url_prefix="/api/jobs")
+        app.register_blueprint(tasks_bp, url_prefix="/api")
 
         from .routes.admin import admin_bp
         app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
         @app.route("/")
-        def health():
+        def home():
             return {"status": "ok"}
 
         return app
