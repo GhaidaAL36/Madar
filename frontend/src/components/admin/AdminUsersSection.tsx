@@ -1,4 +1,4 @@
-import { useAdminUsers } from "../../hooks/useAdminUsers";
+import { useAdminUsers } from "../../hooks/useAdminUsersApi";
 
 const LABELS = {
   heading:   "المستخدمون",

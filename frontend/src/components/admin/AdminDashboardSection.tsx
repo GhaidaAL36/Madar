@@ -1,25 +1,25 @@
-import { jobs } from "../../data/jobsData";
-import { dummyUsers } from "../../data/adminData";
 import type { AdminSection } from "../../types/admin";
 
 const LABELS = {
-  dashboard:    "لوحة التحكم",
-  totalUsers:   "إجمالي المستخدمين",
-  totalJobs:    "المهن المتاحة",
-  manageJobs:   "إدارة المهن",
-  manageJobsSub:"إضافة وتعديل المهن",
-  manageUsers:  "إدارة المستخدمين",
+  dashboard:      "لوحة التحكم",
+  totalUsers:     "إجمالي المستخدمين",
+  totalJobs:      "المهن المتاحة",
+  manageJobs:     "إدارة المهن",
+  manageJobsSub:  "إضافة وتعديل المهن",
+  manageUsers:    "إدارة المستخدمين",
   manageUsersSub: "عرض وإدارة الحسابات",
 } as const;
 
 interface Props {
   setSection: (s: AdminSection) => void;
+  userCount?: number;
+  jobCount?: number;
 }
 
-function AdminDashboardSection({ setSection }: Props) {
+function AdminDashboardSection({ setSection, userCount = 0, jobCount = 0 }: Props) {
   const stats = [
-    { label: LABELS.totalUsers, value: dummyUsers.length },
-    { label: LABELS.totalJobs,  value: jobs.length       },
+    { label: LABELS.totalUsers, value: userCount },
+    { label: LABELS.totalJobs,  value: jobCount  },
   ];
 
   return (
@@ -28,22 +28,18 @@ function AdminDashboardSection({ setSection }: Props) {
         {LABELS.dashboard}
       </h1>
 
-      {/* Stats */}
       <div className="grid grid-cols-4 gap-5">
         {stats.map((stat) => (
           <div
             key={stat.label}
             className="bg-bg-card rounded-[18px] px-6 py-6 shadow-[0_10px_30px_rgba(26,58,74,0.06)]"
           >
-            <div className="text-[26px] font-bold text-bg-dark-secondary">
-              {stat.value}
-            </div>
+            <div className="text-[26px] font-bold text-bg-dark-secondary">{stat.value}</div>
             <div className="text-[13px] text-text-muted mt-1">{stat.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Quick Nav */}
       <div className="grid grid-cols-2 gap-5">
         <div
           onClick={() => setSection("jobs")}
