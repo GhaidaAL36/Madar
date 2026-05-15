@@ -10,6 +10,7 @@ import ReviewPage from "./pages/ReviewPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
+import { AdminRoute } from "./components/admin/AdminRoute";
 
 function App() {
   useScrollToTop();
@@ -23,7 +24,7 @@ function App() {
       <Route path="/jobs/:jobId/tasks/:taskId/review" element={<ReviewPage />} />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>}/>
     </Routes>
   );
 }

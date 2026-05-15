@@ -1,13 +1,17 @@
-import { jobs } from "../../data/jobsData";
+import type { Job } from "../../types/Job";
 
 const LABELS = {
-  heading:   "المهن",
-  addJob:    "+ إضافة مهنة",
-  edit:      "تعديل",
-  delete:    "حذف",
+  heading: "المهن",
+  addJob:  "+ إضافة مهنة",
+  edit:    "تعديل",
+  delete:  "حذف",
 } as const;
 
-function AdminJobsSection() {
+interface Props {
+  jobs: Job[];
+}
+
+function AdminJobsSection({ jobs }: Props) { 
   return (
     <>
       <div className="flex items-center justify-between">
