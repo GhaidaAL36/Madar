@@ -83,4 +83,4 @@ def login():
 def logout():
     response = make_response(success_response({"message": "تم تسجيل الخروج"}))
     unset_jwt_cookies(response)
-    return response
+    return success_response({"message": "تم تسجيل الخروج بنجاح"})
