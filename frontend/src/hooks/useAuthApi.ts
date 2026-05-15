@@ -10,8 +10,17 @@ export function useAuth() {
   const login = async (payload: LoginPayload) => {
     setLoading(true);
     setError(null);
+
     authService.login(payload)
-      .then(() => navigate("/profile"))
+    .then((data) => {
+      console.log("LOGIN RESPONSE:", data);
+      console.log("USER ROLE:", data.user.role);
+
+      const role = data.user.role?.trim().toLowerCase();
+      const destination = role === "admin" ? "/admin" : "/profile";
+
+      navigate(destination);
+    })
       .catch(() => setError("البريد الإلكتروني أو كلمة المرور غير صحيحة"))
       .finally(() => setLoading(false));
   };
