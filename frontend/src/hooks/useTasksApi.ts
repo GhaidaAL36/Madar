@@ -1,4 +1,3 @@
-// when api is ready
 import { useEffect, useState } from "react";
 import { jobService } from "../services/jobService";
 import type { Task } from "../types/Job";

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import type { CodeTaskType } from "@/types/CodeTask";
-import { useCodeTask } from "@/hooks/useCodeTask"; // remove when api
-// import { useCodeTask } from "../hooks/useCodeTaskApi"; - when api
-import { simulateRun } from "@/utils/codeRunner";
+import { useCodeTask } from "@/hooks/useCodeTaskApi";
+import { codeService } from "@/services/codeService";
 import HintsPanel from "../HintsPanel";
 import OutputPanel from "./OutputPanel";
 
@@ -30,23 +30,50 @@ interface Props {
 }
 
 export default function CodeTask({ taskType, onSubmit }: Props) {
-  const codeTaskData = useCodeTask(taskType);
-  const [code, setCode] = useState(codeTaskData.starterCode);
+  const { jobId, taskId } = useParams<{ jobId: string; taskId: string }>();
+
+  const { codeTask, loading, error } = useCodeTask(
+    jobId ?? "",
+    taskId ?? "",
+    taskType
+  );
+
+  const [code, setCode] = useState("");
   const [output, setOutput] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
 
   useEffect(() => {
-    setCode(codeTaskData.starterCode);
-    setOutput(null);
-  }, [taskType, codeTaskData.starterCode]);
+    if (codeTask) {
+      setCode(codeTask.starterCode);
+      setOutput(null);
+    }
+  }, [codeTask, taskType]);
 
   const handleRun = async () => {
+    if (!jobId || !taskId) return;
     setRunning(true);
     setOutput(null);
-    const result = await simulateRun(code, codeTaskData.expectedOutput);
-    setOutput(result);
-    setRunning(false);
+    try {
+      const result = await codeService.run(jobId, taskId, code);
+      setOutput(result);
+    } catch {
+      setOutput("حدث خطأ أثناء تشغيل الكود");
+    } finally {
+      setRunning(false);
+    }
   };
+
+  if (loading) return (
+    <div className="flex flex-1 items-center justify-center bg-bg-dark text-text-muted text-sm">
+      جارٍ التحميل...
+    </div>
+  );
+
+  if (error || !codeTask) return (
+    <div className="flex flex-1 items-center justify-center bg-bg-dark text-red-400 text-sm">
+      {error ?? "فشل تحميل بيانات المهمة"}
+    </div>
+  );
 
   return (
     <div className="flex flex-col flex-1 h-full bg-bg-dark overflow-hidden">
@@ -84,7 +111,7 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
           <div className="flex-1 overflow-hidden" dir="ltr">
             <Editor
               height="100%"
-              language="python"
+              language={codeTask.language}
               value={code}
               onChange={(val) => setCode(val ?? "")}
               theme="vs-dark"
@@ -107,7 +134,7 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
         <OutputPanel output={output} running={running} />
       </div>
 
-      <HintsPanel hints={codeTaskData.hints} />
+      <HintsPanel hints={codeTask.hints} />
     </div>
   );
 }

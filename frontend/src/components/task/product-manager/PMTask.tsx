@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import type { PMTaskType } from "@/types/PMTask";
-import { usePMTask } from "@/hooks/usePMTask"; // delete
-// import { usePMTask } from "@/hooks/usePMTaskApi"; // add 
+import { usePMTask } from "@/hooks/usePMTaskApi";
 import CommentsView from "./pmViews/CommentsView";
 import DocumentView from "./pmViews/DocumentView";
 import UXProblemView from "./pmViews/UXProblemView";
@@ -34,38 +34,33 @@ interface Props {
 }
 
 export default function PMTask({ taskType, onSubmit }: Props) {
-  const pmTask = usePMTask(taskType);
+  const { jobId, taskId } = useParams<{ jobId: string; taskId: string }>();
+  const { pmTask, loading, error } = usePMTask(jobId ?? "", taskId ?? "", taskType);
   const [answer, setAnswer] = useState("");
   const { badge, color } = LABELS[taskType];
+
+  if (loading) return (
+    <div className="flex flex-1 items-center justify-center bg-bg-dark text-text-muted text-sm">
+      جارٍ التحميل...
+    </div>
+  );
+
+  if (error || !pmTask) return (
+    <div className="flex flex-1 items-center justify-center bg-bg-dark text-red-400 text-sm">
+      {error ?? "فشل تحميل بيانات المهمة"}
+    </div>
+  );
 
   const renderContent = () => {
     switch (taskType) {
       case "review-comments":
         return <CommentsView comments={pmTask.comments ?? []} />;
-
       case "review-document":
-        return (
-          <DocumentView
-            title={pmTask.documentTitle ?? ""}
-            sections={pmTask.sections ?? []}
-          />
-        );
-
+        return <DocumentView title={pmTask.documentTitle ?? ""} sections={pmTask.sections ?? []} />;
       case "ux-problem":
-        return (
-          <UXProblemView
-            description={pmTask.uxDescription ?? ""}
-            userJourney={pmTask.uxUserJourney ?? []}
-          />
-        );
-
+        return <UXProblemView description={pmTask.uxDescription ?? ""} userJourney={pmTask.uxUserJourney ?? []} />;
       case "stakeholder-notes":
-        return (
-          <StakeholderView
-            title={pmTask.documentTitle ?? ""}
-            sections={pmTask.sections ?? []}
-          />
-        );
+        return <StakeholderView title={pmTask.documentTitle ?? ""} sections={pmTask.sections ?? []} />;
     }
   };
 
@@ -75,9 +70,7 @@ export default function PMTask({ taskType, onSubmit }: Props) {
         dir="rtl"
         className="flex items-start gap-4 px-5 py-4 border-b border-white/8 shrink-0"
       >
-        <span
-          className={`text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 mt-0.5 ${color}`}
-        >
+        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 mt-0.5 ${color}`}>
           {badge}
         </span>
       </div>

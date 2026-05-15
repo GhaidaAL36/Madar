@@ -5,7 +5,7 @@ import type { CodeTaskType } from "../types/Job";
 import type { PMTaskType } from "../types/PMTask";
 import TaskNavbar from "../components/task/TaskNavbar";
 import TaskDetails from "../components/task/TaskDetails";
-import CodeTask from "../components/task/Software Engineer/CodeTask";
+import CodeTask from "../components/task/Software-Engineer/CodeTask";
 import DataTask from "../components/task/Data-Scientist/DataTask";
 import PMTask from "../components/task/product-manager/PMTask";
 import ConfirmModal from "../components/task/ConfirmModal";

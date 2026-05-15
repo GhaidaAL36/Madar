@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useDataTask } from "@/hooks/useDataTask";
+import { useParams } from "react-router-dom";
+import { useDataTask } from "@/hooks/useDataTaskApi";
 import TableTab from "./dataTabs/TableTab";
 import ChartTab from "./dataTabs/ChartTab";
 import StatsTab from "./dataTabs/StatsTab";
@@ -20,22 +21,27 @@ const LABELS = {
 } as const;
 
 export default function DataTask() {
-  const dataTask = useDataTask();
+  const { jobId, taskId } = useParams<{ jobId: string; taskId: string }>();
+  const { dataTask, loading, error } = useDataTask(jobId ?? "", taskId ?? "");
   const [activeTab, setActiveTab] = useState<TabKey>("table");
+
+  if (loading) return (
+    <div className="flex flex-1 items-center justify-center bg-bg-dark text-text-muted text-sm">
+      جارٍ التحميل...
+    </div>
+  );
+
+  if (error || !dataTask) return (
+    <div className="flex flex-1 items-center justify-center bg-bg-dark text-red-400 text-sm">
+      {error ?? "فشل تحميل البيانات"}
+    </div>
+  );
 
   const renderTab = () => {
     switch (activeTab) {
-      case "table":
-        return <TableTab columns={dataTask.columns} rows={dataTask.rows} />;
-      case "chart":
-        return (
-          <ChartTab
-            chartType={dataTask.chartType}
-            chartData={dataTask.chartData}
-          />
-        );
-      case "stats":
-        return <StatsTab stats={dataTask.stats} />;
+      case "table": return <TableTab columns={dataTask.columns} rows={dataTask.rows} />;
+      case "chart": return <ChartTab chartType={dataTask.chartType} chartData={dataTask.chartData} />;
+      case "stats": return <StatsTab stats={dataTask.stats} />;
     }
   };
 
@@ -45,9 +51,7 @@ export default function DataTask() {
         dir="rtl"
         className="flex items-start gap-4 px-5 py-4 border-b border-white/8 shrink-0"
       >
-        <span
-          className={`text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 mt-0.5 ${LABELS.badgeColor}`}
-        >
+        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 mt-0.5 ${LABELS.badgeColor}`}>
           {LABELS.typeBadge}
         </span>
       </div>

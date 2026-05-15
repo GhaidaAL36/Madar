@@ -50,14 +50,14 @@ const JobHeader = ({ job }: Props) => {
           </div>
 
           <div className="grid grid-cols-2 gap-3 p-5">
-            {job.skills.map((skill) => (
-              <div key={skill} className="flex items-center justify-end gap-2">
-                <span className="bg-bg-card border border-teal/20 rounded-lg px-3 py-1.5 text-text-primary text-xs font-medium text-right leading-relaxed">
-                  {skill}
-                </span>
-                <span className="w-2 h-2 rounded-full bg-teal shrink-0" />
-              </div>
-            ))}
+          {(job.skills ?? []).map((skill) => (
+            <div key={skill} className="flex items-center justify-end gap-2">
+              <span className="bg-bg-card border border-teal/20 rounded-lg px-3 py-1.5 text-text-primary text-xs font-medium text-right leading-relaxed">
+                {skill}
+              </span>
+              <span className="w-2 h-2 rounded-full bg-teal shrink-0" />
+            </div>
+          ))}
           </div>
         </div>
       </div>
