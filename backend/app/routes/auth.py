@@ -72,6 +72,7 @@ def login():
             "id": user.id,
             "name": user.name,
             "email": user.email,
+            "role": user.role,
             "initials": user.profile.initials if user.profile else ""
         }
     })
