@@ -1,5 +1,5 @@
-from flask import Blueprint, request
-from flask_jwt_extended import create_access_token
+from flask import Blueprint, request, make_response
+from flask_jwt_extended import create_access_token, jwt_required, unset_jwt_cookies
 from app.extensions import db, bcrypt
 from app.models.user import User
 from app.models.profile import Profile
@@ -76,3 +76,11 @@ def login():
             "initials": user.profile.initials if user.profile else ""
         }
     })
+
+
+@auth_bp.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    response = make_response(success_response({"message": "تم تسجيل الخروج"}))
+    unset_jwt_cookies(response)
+    return response
