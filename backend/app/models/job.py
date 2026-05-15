@@ -3,7 +3,7 @@ from ..extensions import db
 
 
 class Job(db.Model):
-    tablename = "jobs"
+    __tablename__ = "jobs"
 
     id = db.Column(db.String(100), primary_key=True)
     icon = db.Column(db.String(10), nullable=False)
