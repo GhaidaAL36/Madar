@@ -1,4 +1,4 @@
-MAJORS = {
+Job = {
     "software-engineer": {
         "id": "software-engineer",
         "title": "مهندس برمجيات",

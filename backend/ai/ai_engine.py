@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from ai.majors_data import MAJORS
+from ai.majors_data import job
 from ai.evaluation import EvaluationService
 from ai.task.software_engineering.debug_code import DebugCodeTask
 from ai.task.software_engineering.write_function import WriteFunctionTask
@@ -28,25 +28,25 @@ tasks = {
     }
 }
 
-def getMajors() -> list:
+def getJobs() -> list:
     return [
         {
-            "id": major_id,
-            "title": major["title"],
-            "subtitle": major["subtitle"],
-            "tasks": major["tasks"]
+            "id": job_id,
+            "title": j["title"],
+            "subtitle": j["subtitle"],
+            "tasks": j["tasks"]
         }
-        for major_id, major in MAJORS.items()
+        for job_id, j in job.items()
     ]
 
-def getMajor(major_id: str) -> dict:
-    return MAJORS.get(major_id)
+def getJob(job_id: str) -> dict:
+    return job.get(job_id)
 
-def getTask(major_id: str, task_id: str) -> dict:
-    major_explanation = MAJORS[major_id]["explanation"]
-    task = tasks[major_id][task_id]
-    concept = task.explainConcept(major_explanation)
-    return task.generateTask(concept, major_explanation)
+def getTask(job_id: str, task_id: str) -> dict:
+    job_explanation = job[job_id]["explanation"]
+    task = tasks[job_id][task_id]
+    concept = task.explainConcept(job_explanation)
+    return task.generateTask(concept, job_explanation)
 
 def evaluateResponse(questions: list, user_answers: dict) -> dict:
     return evaluation_service.evaluateResponse(questions, user_answers)
