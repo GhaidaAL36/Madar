@@ -15,4 +15,3 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     profile = db.relationship("Profile", backref="user", uselist=False, lazy=True)
-    reviews = db.relationship("Review", backref="user", lazy=True)

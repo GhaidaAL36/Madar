@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from ..models import Job, Task, Simulation, Submission
+from ..models import Job, Task, Simulation, Submission, Review
 from ..extensions import db
 
 jobs_bp = Blueprint("jobs", __name__)
@@ -162,3 +162,66 @@ def submit_simulation(job_id, task_id, simulation_id):
         "simulation_id": submission.simulation_id,
         "submitted_at": submission.submitted_at.isoformat(),
     }), 201
+
+@jobs_bp.route("/<job_id>/tasks/<int:task_id>/simulations/<simulation_id>/review", methods=["GET"])
+def get_review(job_id, task_id, simulation_id):
+    task = Task.query.filter_by(id=task_id, job_id=job_id).first()
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+
+    simulation = Simulation.query.filter_by(id=simulation_id, task_id=task_id).first()
+    if not simulation:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    submission = Submission.query.filter_by(simulation_id=simulation_id).first()
+    if not submission:
+        return jsonify({"error": "Submission not found"}), 404
+
+    job = Job.query.get(job_id)
+    review = Review.query.filter_by(submission_id=submission.id).first()
+    if not review:
+        # TODO: dummy data
+        review = Review(
+            submission_id=submission.id,
+            score=85,
+            fit_percent=78,
+            fit_summary="أظهرت فهماً جيداً لمتطلبات المنتج وقدرة على تحليل احتياجات المستخدمين.",
+            strengths=["فهم جيد للمستخدم", "توصيات واضحة", "تحليل منطقي"],
+            improvements=["يحتاج تحليل أعمق للبيانات", "تعزيز الحجج بأمثلة"],
+            detailed_feedback=[
+                "أظهرت إجابتك فهماً واضحاً لمشكلة المنتج وقدرة على صياغة رؤية استراتيجية.",
+                "يمكن تحسين الإجابة بإضافة مقاييس قابلة للقياس لتحديد نجاح المنتج.",
+            ],
+            skills_json=[
+                {"label": "تحليل المشكلة", "value": 80, "color": "teal"},
+                {"label": "رؤية المنتج", "value": 85, "color": "teal"},
+                {"label": "التواصل", "value": 75, "color": "gold"},
+            ],
+            answer_review_json=[
+                {
+                    "title": "تحديد المشكلة",
+                    "items": [
+                        {"text": "حددت المشكلة الرئيسية بشكل صحيح", "correct": True},
+                        {"text": "لم يتم ذكر تأثير المشكلة على المستخدم", "correct": False},
+                    ]
+                }
+            ],
+        )
+        db.session.add(review)
+        db.session.commit()
+
+    return jsonify({
+        "review": {
+            "score":           review.score,
+            "fitPercent":      review.fit_percent,
+            "fitSummary":      review.fit_summary,
+            "strengths":       review.strengths,
+            "improvements":    review.improvements,
+            "detailedFeedback": review.detailed_feedback,
+            "skills":          review.skills_json,
+            "answerReview":    review.answer_review_json,
+        },
+        "jobTitleAr":   job.title_ar,
+        "taskTitle":    task.title,
+        "taskDuration": task.duration,
+    }), 200

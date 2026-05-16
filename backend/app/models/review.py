@@ -10,7 +10,6 @@ class Review(db.Model):
     submission_id = db.Column(
         db.String(36), db.ForeignKey("submissions.id"), unique=True, nullable=False
     )
-    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
     score = db.Column(db.Integer, nullable=False)
     fit_percent = db.Column(db.Integer, nullable=False)
     fit_summary = db.Column(db.Text, nullable=False)
