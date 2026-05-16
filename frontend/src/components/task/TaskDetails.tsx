@@ -133,7 +133,7 @@ export default function TaskDetails({ task }: Props) {
           {task.title}
         </h2>
         <p className="text-xs leading-relaxed text-text-muted">
-          {task.fullDescription}
+          {task.description}
         </p>
       </SectionCard>
 
@@ -170,7 +170,7 @@ export default function TaskDetails({ task }: Props) {
         icon={<i className="fa-solid fa-list-ul" />}
       >
         <ul className="flex flex-col gap-2 mt-2">
-          {task.evaluationCriteria.map((criterion) => (
+          {task.evaluation_criteria.map((criterion) => (
             <CriterionItem key={criterion.id} criterion={criterion} />
           ))}
         </ul>

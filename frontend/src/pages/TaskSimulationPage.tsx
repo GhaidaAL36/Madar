@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
-import { useTaskSimulation } from "../hooks/useTaskSimulation";
+import { useTaskSimulation } from "../hooks/useTaskSimulationApi";
 import type { CodeTaskType } from "../types/Job";
 import type { PMTaskType } from "../types/PMTask";
 import TaskNavbar from "../components/task/TaskNavbar";
@@ -12,25 +12,35 @@ import ConfirmModal from "../components/task/ConfirmModal";
 
 export default function TaskSimulationPage() {
   const navigate = useNavigate();
-  const { id, taskId } = useParams<{ id: string; taskId: string }>();
-  const task = useTaskSimulation(id ?? "", taskId ?? "");
+  const { jobId, taskId } = useParams<{ jobId: string; taskId: string }>();
+  const { task, simulationId, loading, error } = useTaskSimulation(jobId ?? "", taskId ?? "");
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSubmitRequest = () => setShowConfirm(true);
   const handleConfirm = () => {
     setShowConfirm(false);
-    navigate(`/jobs/${id}/tasks/${taskId}/review`);
+    navigate(`/jobs/${jobId}/tasks/${taskId}/review`);
   };
   const handleCancel = () => setShowConfirm(false);
 
-  if (!task)
+  if (loading)
+    return (
+      <div className="min-h-screen bg-bg-dark flex items-center justify-center">
+        <p className="text-text-muted text-sm">جارٍ التحميل...</p>
+      </div>
+    );
+
+  if (error || !task)
     return (
       <div className="min-h-screen bg-bg-dark flex items-center justify-center">
         <p className="text-text-muted text-sm">المهمة غير موجودة</p>
       </div>
     );
 
+    
+
   const renderTaskArea = () => {
+    console.log("task.type:", task.type);
     switch (task.type) {
       // Software Engineer 
       case "write-code":
