@@ -12,10 +12,17 @@ export interface EvaluationCriterion {
 }
 
 export interface SimulationTask {
-  id: string;
+  id: number;
+  job_id: string;
   type: TaskType;
   title: string;
-  fullDescription: string;
+  full_title: string;
+  duration: string;
+  time_range: string;
+  description: string;
+  will_learn: string[];
+  will_do: string[];
   expectations: TaskExpectation[];
-  evaluationCriteria: EvaluationCriterion[];
+  evaluation_criteria: EvaluationCriterion[];
+  content: Record<string, any>;
 }

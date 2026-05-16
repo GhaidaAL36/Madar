@@ -17,7 +17,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // handle 401, 403, 500 globally here later
     return Promise.reject(error);
   }
 );
