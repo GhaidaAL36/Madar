@@ -1,4 +1,4 @@
-Job = {
+job = {
     "software-engineer": {
         "id": "software-engineer",
         "title": "مهندس برمجيات",
