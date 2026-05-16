@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from ..models import Job, Task, Simulation
+from ..models import Job, Task, Simulation, Submission
 from ..extensions import db
 
 jobs_bp = Blueprint("jobs", __name__)
@@ -133,3 +133,32 @@ def get_simulation(job_id, task_id, simulation_id):
             "content":             task.content,
         },
     }), 200
+@jobs_bp.route("/<job_id>/tasks/<int:task_id>/simulations/<simulation_id>/submit", methods=["POST"])
+def submit_simulation(job_id, task_id, simulation_id):
+    simulation = Simulation.query.filter_by(id=simulation_id, task_id=task_id).first()
+    if not simulation:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    if simulation.status == "completed":
+        return jsonify({"error": "Already submitted"}), 400
+
+    data = request.get_json(silent=True) or {}
+    answer = data.get("answer", "")
+
+    submission = Submission(
+        simulation_id=simulation_id,
+        task_id=task_id,
+        answer_type="analysis",
+        analysis=answer,
+    )
+    simulation.status = "completed"
+    simulation.completed_at = datetime.utcnow()
+
+    db.session.add(submission)
+    db.session.commit()
+
+    return jsonify({
+        "id":           submission.id,
+        "simulation_id": submission.simulation_id,
+        "submitted_at": submission.submitted_at.isoformat(),
+    }), 201
