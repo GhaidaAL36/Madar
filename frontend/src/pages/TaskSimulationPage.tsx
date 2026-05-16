@@ -26,7 +26,7 @@ export default function TaskSimulationPage() {
   const handleConfirm = async () => {
     setShowConfirm(false);
     await taskService.submitSimulation(jobId!, taskId!, simulationId!, answer);
-    navigate(`/jobs/${jobId}/tasks/${taskId}/review`);
+    navigate(`/jobs/${jobId}/tasks/${taskId}/simulations/${simulationId}/review`);
   };
   const handleCancel = () => setShowConfirm(false);
 

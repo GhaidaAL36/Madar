@@ -1,35 +1,35 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useReview } from "../hooks/useReview"; // delete when api
-// import { useReview } from "../hooks/useReviewApi"; - when api
+import { useReview } from "../hooks/useReviewApi";
 import { getFitLabel } from "../utils/reviewUtils";
 import ScoreRing from "../components/review/ScoreRing";
 import SkillBar from "../components/review/SkillBar";
 import SectionCard from "../components/review/SectionCard";
 
 const LABELS = {
-  evaluated:       "✓ تم التقييم",
-  results:         "نتائج",
-  skillsTitle:     "تقييم المهارات",
-  strengthsTitle:  "نقاط القوة والتطوير",
-  strengthsLabel:  "✓ نقاط القوة",
-  improvLabel:     "↑ للتطوير",
-  feedbackTitle:   "تغذية راجعة تفصيلية",
-  answersTitle:    "مراجعة إجاباتك",
-  fitLabel:        "توافقك مع مهنة",
-  fitBased:        "بناءً على هذه المهمة:",
-  fitTotal:        "التوافق الكلي",
-  back:            "← رجوع",
-  backTo:          "العودة لصفحة",
+  evaluated: "✓ تم التقييم",
+  results: "نتائج",
+  skillsTitle: "تقييم المهارات",
+  strengthsTitle: "نقاط القوة والتطوير",
+  strengthsLabel: "✓ نقاط القوة",
+  improvLabel: "↑ للتطوير",
+  feedbackTitle: "تغذية راجعة تفصيلية",
+  answersTitle: "مراجعة إجاباتك",
+  fitLabel: "توافقك مع مهنة",
+  fitBased: "بناءً على هذه المهمة:",
+  fitTotal: "التوافق الكلي",
+  back: "← رجوع",
+  backTo: "العودة لصفحة",
 } as const;
 
 function ReviewPage() {
   const navigate = useNavigate();
-  const { id, taskId } = useParams<{ id: string; taskId: string }>();
+  const { jobId, taskId, simulationId } = useParams<{ jobId: string; taskId: string; simulationId: string }>();
+  const { data, loading, error } = useReview(jobId ?? "", taskId ?? "", simulationId ?? "");
 
-  const { review, jobTitleAr, taskTitle, taskDuration } = useReview(
-    id ?? "",
-    Number(taskId ?? 1)
-  );
+  if (loading) return <div className="min-h-screen bg-bg-dark flex items-center justify-center"><p className="text-text-muted text-sm">جارٍ التحميل...</p></div>;
+  if (error || !data) return <div className="min-h-screen bg-bg-dark flex items-center justify-center"><p className="text-text-muted text-sm">فشل تحميل النتائج</p></div>;
+
+  const { review, jobTitleAr, taskTitle, taskDuration } = data;
 
   return (
     <div className="min-h-screen bg-bg-light" dir="rtl">
@@ -41,7 +41,7 @@ function ReviewPage() {
           <span className="text-text-muted text-[11px]">{taskTitle}</span>
         </div>
         <button
-          onClick={() => navigate(`/jobs/${id}`)}
+          onClick={() => navigate(`/jobs/${jobId}`)}
           className="text-[13px] font-bold text-text-on-dark/70 hover:text-text-on-dark border border-white/15 hover:border-white/30 px-4 py-1.5 rounded-sm transition-all cursor-pointer bg-transparent"
         >
           {LABELS.back}
@@ -127,11 +127,10 @@ function ReviewPage() {
                 {block.items.map((item, j) => (
                   <div
                     key={j}
-                    className={`text-[13px] px-4 py-2.5 rounded-[10px] leading-[1.7] ${
-                      item.correct
-                        ? "bg-teal/8 text-teal"
-                        : "bg-bg-light-secondary text-text-muted"
-                    }`}
+                    className={`text-[13px] px-4 py-2.5 rounded-[10px] leading-[1.7] ${item.correct
+                      ? "bg-teal/8 text-teal"
+                      : "bg-bg-light-secondary text-text-muted"
+                      }`}
                   >
                     {item.correct ? "✓ " : ""}{item.text}
                   </div>
@@ -163,7 +162,7 @@ function ReviewPage() {
             <span className="text-[13px] text-text-on-dark/50">{LABELS.fitTotal}</span>
           </div>
           <button
-            onClick={() => navigate(`/jobs/${id}`)}
+            onClick={() => navigate(`/jobs/${jobId}`)}
             className="w-fit bg-white/10 hover:bg-white/15 border border-white/15 text-text-on-dark text-[13px] font-bold px-5 py-2.5 rounded-[10px] transition-all mt-2 cursor-pointer"
           >
             {LABELS.backTo} {jobTitleAr}
