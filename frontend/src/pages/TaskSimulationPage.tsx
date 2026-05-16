@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useTaskSimulation } from "../hooks/useTaskSimulationApi";
+import { taskService } from "../services/taskService";
 import type { CodeTaskType } from "../types/Job";
 import type { PMTaskType } from "../types/PMTask";
 import TaskNavbar from "../components/task/TaskNavbar";
@@ -15,10 +16,16 @@ export default function TaskSimulationPage() {
   const { jobId, taskId } = useParams<{ jobId: string; taskId: string }>();
   const { task, simulationId, loading, error } = useTaskSimulation(jobId ?? "", taskId ?? "");
   const [showConfirm, setShowConfirm] = useState(false);
+  const [answer, setAnswer] = useState("");
 
-  const handleSubmitRequest = () => setShowConfirm(true);
-  const handleConfirm = () => {
+  const handleSubmitRequest = (answer: string) => {
+    setAnswer(answer);
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = async () => {
     setShowConfirm(false);
+    await taskService.submitSimulation(jobId!, taskId!, simulationId!, answer);
     navigate(`/jobs/${jobId}/tasks/${taskId}/review`);
   };
   const handleCancel = () => setShowConfirm(false);
@@ -37,7 +44,7 @@ export default function TaskSimulationPage() {
       </div>
     );
 
-    
+
 
   const renderTaskArea = () => {
     console.log("task.type:", task.type);
@@ -49,7 +56,7 @@ export default function TaskSimulationPage() {
         return (
           <CodeTask
             taskType={task.type as CodeTaskType}
-            onSubmit={handleSubmitRequest}
+            onSubmit={() => handleSubmitRequest("")}
           />
         );
 
@@ -63,10 +70,7 @@ export default function TaskSimulationPage() {
       case "ux-problem":
       case "stakeholder-notes":
         return (
-          <PMTask
-            taskType={task.type as PMTaskType}
-            onSubmit={handleSubmitRequest}
-          />
+          <PMTask taskType={task.type as PMTaskType} onSubmit={handleSubmitRequest} />
         );
 
       default:
@@ -84,7 +88,7 @@ export default function TaskSimulationPage() {
         <ConfirmModal onConfirm={handleConfirm} onCancel={handleCancel} />
       )}
       <div className="flex flex-col h-screen bg-bg-dark">
-        <TaskNavbar onSubmit={handleSubmitRequest} />
+        <TaskNavbar onSubmit={() => handleSubmitRequest(answer)} />
         <div className="flex flex-1 overflow-hidden">
           <TaskDetails task={task} />
           {renderTaskArea()}

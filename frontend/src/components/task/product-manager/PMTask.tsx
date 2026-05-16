@@ -30,7 +30,7 @@ const LABELS: Record<PMTaskType, { badge: string; color: string }> = {
 
 interface Props {
   taskType: PMTaskType;
-  onSubmit: () => void;
+  onSubmit: (answer: string) => void;
 }
 
 export default function PMTask({ taskType, onSubmit }: Props) {

@@ -21,26 +21,34 @@ export const taskService = {
   },
 
   getPMTask: async (jobId: string, taskId: string): Promise<PMTaskData> => {
-  const { data } = await api.get(`/jobs/${jobId}/tasks/${taskId}`);
-  return {
-    taskType: data.type,
-    instructions: data.description,
-    hints: data.will_learn ?? [],
-    documentTitle: data.full_title,
-    sections: data.content?.sections ?? [],
-    comments: data.content?.comments ?? [],
-    uxDescription: data.content?.ux_description ?? "",
-    uxUserJourney: data.content?.ux_user_journey ?? [],
+    const { data } = await api.get(`/jobs/${jobId}/tasks/${taskId}`);
+    return {
+      taskType: data.type,
+      instructions: data.description,
+      hints: data.will_learn ?? [],
+      documentTitle: data.full_title,
+      sections: data.content?.sections ?? [],
+      comments: data.content?.comments ?? [],
+      uxDescription: data.content?.ux_description ?? "",
+      uxUserJourney: data.content?.ux_user_journey ?? [],
     };
   },
 
   createSimulation: async (jobId: string, taskId: string): Promise<{ id: string; status: string; started_at: string }> => {
-  const { data } = await api.post(`/jobs/${jobId}/tasks/${taskId}/simulations`, {});
-  return data;
+    const { data } = await api.post(`/jobs/${jobId}/tasks/${taskId}/simulations`, {});
+    return data;
   },
 
-getSimulation: async (jobId: string, taskId: string, simulationId: string): Promise<{ simulation: any; task: SimulationTask }> => {
-  const { data } = await api.get(`/jobs/${jobId}/tasks/${taskId}/simulations/${simulationId}`);
-  return data;
-},
+  getSimulation: async (jobId: string, taskId: string, simulationId: string): Promise<{ simulation: any; task: SimulationTask }> => {
+    const { data } = await api.get(`/jobs/${jobId}/tasks/${taskId}/simulations/${simulationId}`);
+    return data;
+  },
+
+  submitSimulation: async (jobId: string, taskId: string, simulationId: string, answer: string) => {
+    const { data } = await api.post(
+      `/jobs/${jobId}/tasks/${taskId}/simulations/${simulationId}/submit`,
+      { answer }
+    );
+    return data;
+  },
 };
