@@ -11,33 +11,45 @@ export interface SignupPayload {
   password: string;
 }
 
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role?: string;
+  initials?: string;
+}
+
 export interface AuthResponse {
   token: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-  };
+  user: AuthUser;
 }
+
+const TOKEN_KEY = "token";
 
 export const authService = {
   login: async (payload: LoginPayload): Promise<AuthResponse> => {
-    const { data } = await api.post("/auth/login", payload);
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("role", data.user.role);
+    const { data } = await api.post<AuthResponse>("/auth/login", payload);
+    localStorage.setItem(TOKEN_KEY, data.token);
     return data;
   },
 
   signup: async (payload: SignupPayload): Promise<AuthResponse> => {
-    const { data } = await api.post("/auth/signup", payload);
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("role", data.user.role); 
+    const { data } = await api.post<AuthResponse>("/auth/signup", payload);
+    localStorage.setItem(TOKEN_KEY, data.token);
     return data;
   },
 
-  logout: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+  logout: async (): Promise<void> => {
+    try {
+      await api.post("/auth/logout");
+    } catch {
+      // clear locally regardless
+    } finally {
+      localStorage.removeItem(TOKEN_KEY);
+    }
   },
+
+  getToken: (): string | null => localStorage.getItem(TOKEN_KEY),
+
+  isAuthenticated: (): boolean => !!localStorage.getItem(TOKEN_KEY),
 };
