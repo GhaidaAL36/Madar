@@ -1,4 +1,5 @@
 import type { Job } from "../../types/Job";
+import StructuredDescription from "./StructuredDescription";
 
 const LABELS = {
   requiredSkills: "المهارات المطلوبة",
@@ -33,9 +34,7 @@ const JobHeader = ({ job }: Props) => {
           {job.descriptionPrimary}
         </p>
 
-        <p className="text-text-on-dark text-sm leading-relaxed text-right max-w-140">
-          {job.descriptionSecondary}
-        </p>
+        <StructuredDescription text={job.descriptionSecondary} />
       </div>
 
       <div className="flex flex-col gap-4 shrink-0 w-85">
@@ -50,14 +49,14 @@ const JobHeader = ({ job }: Props) => {
           </div>
 
           <div className="grid grid-cols-2 gap-3 p-5">
-          {(job.skills ?? []).map((skill) => (
-            <div key={skill} className="flex items-center justify-end gap-2">
-              <span className="bg-bg-card border border-teal/20 rounded-lg px-3 py-1.5 text-text-primary text-xs font-medium text-right leading-relaxed">
-                {skill}
-              </span>
-              <span className="w-2 h-2 rounded-full bg-teal shrink-0" />
-            </div>
-          ))}
+            {(job.skills ?? []).map((skill) => (
+              <div key={skill} className="flex items-center justify-end gap-2">
+                <span className="bg-bg-card border border-teal/20 rounded-lg px-3 py-1.5 text-text-primary text-xs font-medium text-right leading-relaxed">
+                  {skill}
+                </span>
+                <span className="w-2 h-2 rounded-full bg-teal shrink-0" />
+              </div>
+            ))}
           </div>
         </div>
       </div>
