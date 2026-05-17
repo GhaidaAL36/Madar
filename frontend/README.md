@@ -1,4 +1,4 @@
-# Frontend — Job Simulation Platform
+# Frontend — Madar
 
 A React + TypeScript frontend built with Vite and Tailwind CSS.
 
