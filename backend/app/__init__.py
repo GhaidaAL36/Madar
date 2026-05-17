@@ -33,6 +33,9 @@ def create_app():
         from .routes.admin import admin_bp
         app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
+        from .routes.ai import ai_bp
+        app.register_blueprint(ai_bp, url_prefix="/api/ai")
+
         @app.route("/")
         def home():
             return {"status": "ok"}
