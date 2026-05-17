@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
 from ..models import Job, Task, Simulation, Submission, Review
+from ai.ai_engine import evaluateResponse
 from ..extensions import db
 
 jobs_bp = Blueprint("jobs", __name__)
@@ -133,6 +134,8 @@ def get_simulation(job_id, task_id, simulation_id):
             "content":             task.content,
         },
     }), 200
+
+
 @jobs_bp.route("/<job_id>/tasks/<int:task_id>/simulations/<simulation_id>/submit", methods=["POST"])
 def submit_simulation(job_id, task_id, simulation_id):
     simulation = Simulation.query.filter_by(id=simulation_id, task_id=task_id).first()
@@ -143,24 +146,40 @@ def submit_simulation(job_id, task_id, simulation_id):
         return jsonify({"error": "Already submitted"}), 400
 
     data = request.get_json(silent=True) or {}
-    answer = data.get("answer", "")
+    questions = data.get("questions", [])
+    user_answers = data.get("user_answers", {})
+
+    result = evaluateResponse(questions, user_answers)
 
     submission = Submission(
         simulation_id=simulation_id,
         task_id=task_id,
-        answer_type="analysis",
-        analysis=answer,
+        answer_type="mcq",
+        analysis=str(user_answers),
     )
     simulation.status = "completed"
     simulation.completed_at = datetime.utcnow()
-
     db.session.add(submission)
+    db.session.flush()
+
+    review = Review(
+        submission_id=submission.id,
+        score=result["score"],
+        fit_percent=result["score"],
+        fit_summary=result["feedback"],
+        strengths=[],
+        improvements=[],
+        detailed_feedback=[result["feedback"]],
+        skills_json=[],
+        answer_review_json=result["answer_review"],
+    )
+    db.session.add(review)
     db.session.commit()
 
     return jsonify({
-        "id":           submission.id,
+        "id":            submission.id,
         "simulation_id": submission.simulation_id,
-        "submitted_at": submission.submitted_at.isoformat(),
+        "submitted_at":  submission.submitted_at.isoformat(),
     }), 201
 
 @jobs_bp.route("/<job_id>/tasks/<int:task_id>/simulations/<simulation_id>/review", methods=["GET"])
@@ -180,46 +199,18 @@ def get_review(job_id, task_id, simulation_id):
     job = Job.query.get(job_id)
     review = Review.query.filter_by(submission_id=submission.id).first()
     if not review:
-        # TODO: dummy data
-        review = Review(
-            submission_id=submission.id,
-            score=85,
-            fit_percent=78,
-            fit_summary="أظهرت فهماً جيداً لمتطلبات المنتج وقدرة على تحليل احتياجات المستخدمين.",
-            strengths=["فهم جيد للمستخدم", "توصيات واضحة", "تحليل منطقي"],
-            improvements=["يحتاج تحليل أعمق للبيانات", "تعزيز الحجج بأمثلة"],
-            detailed_feedback=[
-                "أظهرت إجابتك فهماً واضحاً لمشكلة المنتج وقدرة على صياغة رؤية استراتيجية.",
-                "يمكن تحسين الإجابة بإضافة مقاييس قابلة للقياس لتحديد نجاح المنتج.",
-            ],
-            skills_json=[
-                {"label": "تحليل المشكلة", "value": 80, "color": "teal"},
-                {"label": "رؤية المنتج", "value": 85, "color": "teal"},
-                {"label": "التواصل", "value": 75, "color": "gold"},
-            ],
-            answer_review_json=[
-                {
-                    "title": "تحديد المشكلة",
-                    "items": [
-                        {"text": "حددت المشكلة الرئيسية بشكل صحيح", "correct": True},
-                        {"text": "لم يتم ذكر تأثير المشكلة على المستخدم", "correct": False},
-                    ]
-                }
-            ],
-        )
-        db.session.add(review)
-        db.session.commit()
+        return jsonify({"error": "Review not found"}), 404   # ← clean error, no dummy data
 
     return jsonify({
         "review": {
-            "score":           review.score,
-            "fitPercent":      review.fit_percent,
-            "fitSummary":      review.fit_summary,
-            "strengths":       review.strengths,
-            "improvements":    review.improvements,
+            "score":            review.score,
+            "fitPercent":       review.fit_percent,
+            "fitSummary":       review.fit_summary,
+            "strengths":        review.strengths,
+            "improvements":     review.improvements,
             "detailedFeedback": review.detailed_feedback,
-            "skills":          review.skills_json,
-            "answerReview":    review.answer_review_json,
+            "skills":           review.skills_json,
+            "answerReview":     review.answer_review_json,
         },
         "jobTitleAr":   job.title_ar,
         "taskTitle":    task.title,
