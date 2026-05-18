@@ -1,9 +1,21 @@
 from flask import Blueprint, jsonify, request
-from ai.ai_engine import getTask, evaluateResponse
+from ai.ai_engine import getJobs, getJob, getTask, evaluateResponse
 from ..models import Task
 from ..extensions import db
 
 ai_bp = Blueprint("ai", __name__)
+
+@ai_bp.route("/jobs", methods=["GET"])
+def get_ai_jobs():
+    return jsonify(getJobs()), 200
+
+@ai_bp.route("/jobs/<job_id>", methods=["GET"])
+def get_ai_job(job_id):
+    job = getJob(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    return jsonify(job), 200
+
 
 @ai_bp.route("/task", methods=["POST"])
 def get_task():
@@ -15,21 +27,12 @@ def get_task():
         return jsonify({"error": "job_id and task_id are required"}), 400
 
     try:
-        existing = Task.query.filter_by(job_id=job_id, ai_task_id=task_id).first()
-        if existing:
-            return jsonify({
-                "id":          existing.id,
-                "title":       existing.title,
-                "description": existing.description,
-                "content":     existing.content,
-            }), 200
-
         result = getTask(job_id, task_id)
 
         task = Task(
             job_id=job_id,
             ai_task_id=task_id,
-            type=task_id,                                  
+            type=task_id,
             title=result.get("task_title", ""),
             full_title=result.get("task_title", ""),
             duration=result.get("estimated_time", ""),
@@ -39,7 +42,7 @@ def get_task():
             will_do=[],
             expectations=[],
             evaluation_criteria=[],
-            content=result,                                 
+            content=result,
         )
         db.session.add(task)
         db.session.commit()
@@ -55,8 +58,7 @@ def get_task():
         return jsonify({"error": "Invalid job_id or task_id"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
+        
 @ai_bp.route("/evaluate", methods=["POST"])
 def evaluate():
     data = request.get_json(silent=True) or {}
