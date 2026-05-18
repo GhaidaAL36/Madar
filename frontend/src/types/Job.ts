@@ -16,7 +16,7 @@ export interface Job {
 }
 
 export interface Task {
-  id: number;
+  id: string;
   type: TaskType;
   title: string;
   duration: string;
