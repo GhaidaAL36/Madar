@@ -1,47 +1,59 @@
 import { useEffect, useState } from "react";
 import { taskService } from "../services/taskService";
 import type { SimulationTask } from "../types/SimulationTask";
+import type { CodeTaskData } from "../types/CodeTask";
 
 interface UseTaskSimulationResult {
   task: SimulationTask | null;
+  taskDbId: number | null;
   simulationId: string | null;
+  generatedContent: CodeTaskData | null;
   loading: boolean;
   error: string | null;
 }
 
-export function useTaskSimulation(jobId: string, taskId: string): UseTaskSimulationResult {
-  const [task, setTask]               = useState<SimulationTask | null>(null);
-  const [simulationId, setSimulationId] = useState<string | null>(null);
-  const [loading, setLoading]         = useState(true);
-  const [error, setError]             = useState<string | null>(null);
+export function useTaskSimulation(jobId: string, aiTaskId: string): UseTaskSimulationResult {
+  const [task, setTask]                         = useState<SimulationTask | null>(null);
+  const [taskDbIdState, setTaskDbId]            = useState<number | null>(null);
+  const [simulationId, setSimulationId]         = useState<string | null>(null);
+  const [generatedContent, setGeneratedContent] = useState<CodeTaskData | null>(null);
+  const [loading, setLoading]                   = useState(true);
+  const [error, setError]                       = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("jobId:", jobId, "taskId:", taskId);
-    if (!jobId || !taskId) return;
+    if (!jobId || !aiTaskId) return;
+
     taskService
-      .createSimulation(jobId, taskId)
-      .then(({ id }) => {
-        setSimulationId(id);
-        return taskService.getSimulation(jobId, taskId, id);
-      })
-      .then(({ task }) => {
-        const normalized = {
-          ...task,
-          expectations: task.expectations.map((e: any, i: number) =>
-            typeof e === "string" ? { id: String(i), label: e, completed: false } : e
-          ),
-          evaluation_criteria: task.evaluation_criteria.map((c: any, i: number) =>
-            typeof c === "string" ? { id: String(i), label: c } : c
-          ),
-        };
-        setTask(normalized);
+      .generateTask(jobId, aiTaskId)
+      .then((codeTask) => {
+        setTaskDbId(codeTask.taskDbId);
+        setGeneratedContent(codeTask); 
+        return taskService.createSimulation(jobId, codeTask.taskDbId)
+          .then(({ id: simId }) => {
+            setSimulationId(simId);
+            return taskService.getSimulation(jobId, codeTask.taskDbId, simId)
+              .then(({ task }) => {
+                setTask({
+                  ...task,
+                  expectations: (task.expectations ?? []).map((e: any, i: number) =>
+                    typeof e === "string" ? { id: String(i), label: e, completed: false } : e
+                  ),
+                  evaluation_criteria: (task.evaluation_criteria ?? []).map((c: any, i: number) =>
+                    typeof c === "string" ? { id: String(i), label: c } : c
+                  ),
+                  starterCode:  codeTask.starterCode,
+                  instructions: codeTask.instructions,
+                  questions:    codeTask.questions,
+                });
+              });
+          });
       })
       .catch((err) => {
-      console.error("Simulation error:", err);
-      setError("فشل تحميل بيانات المهمة");
-    })
+        console.error("Simulation error:", err);
+        setError("فشل تحميل بيانات المهمة");
+      })
       .finally(() => setLoading(false));
-  }, [jobId, taskId]);
+  }, [jobId, aiTaskId]);
 
-  return { task, simulationId, loading, error };
+  return { task, taskDbId: taskDbIdState, simulationId, generatedContent, loading, error };
 }
