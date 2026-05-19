@@ -1,35 +1,47 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReview } from "../hooks/useReviewApi";
-import { getFitLabel } from "../utils/reviewUtils";
+import { getScoreMeta } from "../utils/reviewUtils";
 import ScoreRing from "../components/review/ScoreRing";
-import SkillBar from "../components/review/SkillBar";
 import SectionCard from "../components/review/SectionCard";
 
 const LABELS = {
   evaluated: "✓ تم التقييم",
   results: "نتائج",
-  skillsTitle: "تقييم المهارات",
-  strengthsTitle: "نقاط القوة والتطوير",
-  strengthsLabel: "✓ نقاط القوة",
-  improvLabel: "↑ للتطوير",
-  feedbackTitle: "تغذية راجعة تفصيلية",
+  feedbackTitle: "تغذية راجعة",
   answersTitle: "مراجعة إجاباتك",
   fitLabel: "توافقك مع مهنة",
   fitBased: "بناءً على هذه المهمة:",
   fitTotal: "التوافق الكلي",
   back: "← رجوع",
   backTo: "العودة لصفحة",
+  correct: "إجابة صحيحة",
+  wrong: "إجابة خاطئة",
 } as const;
 
 function ReviewPage() {
   const navigate = useNavigate();
-  const { jobId, taskId, simulationId } = useParams<{ jobId: string; taskId: string; simulationId: string }>();
-  const { data, loading, error } = useReview(jobId ?? "", taskId ?? "", simulationId ?? "");
+  const { jobId, taskId } = useParams<{ jobId: string; taskId: string }>();
+  const [searchParams] = useSearchParams();
+  const simId    = searchParams.get("sim") ?? "";
+  const taskDbId = searchParams.get("task") ?? "";
 
-  if (loading) return <div className="min-h-screen bg-bg-dark flex items-center justify-center"><p className="text-text-muted text-sm">جارٍ التحميل...</p></div>;
-  if (error || !data) return <div className="min-h-screen bg-bg-dark flex items-center justify-center"><p className="text-text-muted text-sm">فشل تحميل النتائج</p></div>;
+  const { data, loading, error } = useReview(jobId ?? "", taskDbId, simId);
+
+  if (loading) return (
+    <div className="min-h-screen bg-bg-dark flex items-center justify-center">
+      <p className="text-text-muted text-sm">جارٍ التحميل...</p>
+    </div>
+  );
+
+  if (error || !data) return (
+    <div className="min-h-screen bg-bg-dark flex items-center justify-center">
+      <p className="text-text-muted text-sm">فشل تحميل النتائج</p>
+    </div>
+  );
 
   const { review, jobTitleAr, taskTitle, taskDuration } = data;
+  const correctCount = review.answerReview.filter((a) => a.is_correct).length;
+  const total        = review.answerReview.length;
 
   return (
     <div className="min-h-screen bg-bg-light" dir="rtl">
@@ -49,7 +61,7 @@ function ReviewPage() {
       </nav>
 
       {/* Content */}
-      <div className="max-w-275 mx-auto px-6 pt-24 pb-20 flex flex-col gap-6">
+      <div className="max-w-3xl mx-auto px-6 pt-24 pb-20 flex flex-col gap-6">
 
         {/* Hero */}
         <div className="flex items-start justify-between gap-6">
@@ -67,47 +79,7 @@ function ReviewPage() {
           <ScoreRing score={review.score} />
         </div>
 
-        {/* Skills + Strengths */}
-        <div className="grid grid-cols-2 gap-5">
-          <SectionCard title={LABELS.skillsTitle} icon="◎">
-            <div className="flex flex-col gap-4">
-              {review.skills.map((s) => (
-                <SkillBar key={s.label} {...s} />
-              ))}
-            </div>
-          </SectionCard>
-
-          <SectionCard title={LABELS.strengthsTitle} icon="⚙">
-            <div className="grid grid-cols-2 gap-5">
-              <div>
-                <div className="text-[12px] font-bold text-teal mb-3">
-                  {LABELS.strengthsLabel}
-                </div>
-                <ul className="flex flex-col gap-2">
-                  {review.strengths.map((s) => (
-                    <li key={s} className="text-[13px] text-text-muted flex items-start gap-1.5">
-                      <span className="text-teal mt-0.5">•</span>{s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <div className="text-[12px] font-bold text-gold mb-3">
-                  {LABELS.improvLabel}
-                </div>
-                <ul className="flex flex-col gap-2">
-                  {review.improvements.map((s) => (
-                    <li key={s} className="text-[13px] text-text-muted flex items-start gap-1.5">
-                      <span className="text-gold mt-0.5">•</span>{s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </SectionCard>
-        </div>
-
-        {/* Detailed feedback */}
+        {/* Feedback */}
         <SectionCard title={LABELS.feedbackTitle} icon="💬">
           <div className="flex flex-col gap-3">
             {review.detailedFeedback.map((para, i) => (
@@ -118,23 +90,32 @@ function ReviewPage() {
           </div>
         </SectionCard>
 
-        {/* Answer review */}
-        <SectionCard title={LABELS.answersTitle} icon="🔍">
-          <div className="flex flex-col gap-5">
-            {review.answerReview.map((block, i) => (
-              <div key={i} className="flex flex-col gap-2">
-                <div className="text-[13px] font-bold text-bg-dark-secondary">{block.title}</div>
-                {block.items.map((item, j) => (
-                  <div
-                    key={j}
-                    className={`text-[13px] px-4 py-2.5 rounded-[10px] leading-[1.7] ${item.correct
-                      ? "bg-teal/8 text-teal"
-                      : "bg-bg-light-secondary text-text-muted"
-                      }`}
-                  >
-                    {item.correct ? "✓ " : ""}{item.text}
-                  </div>
-                ))}
+        {/* Answer Review */}
+        <SectionCard title={`${LABELS.answersTitle} (${correctCount}/${total})`} icon="🔍">
+          <div className="flex flex-col gap-3">
+            {review.answerReview.map((item) => (
+              <div
+                key={item.id}
+                className={`px-4 py-3 rounded-xl border ${
+                  item.is_correct
+                    ? "bg-teal/8 border-teal/20"
+                    : "bg-red-500/5 border-red-400/20"
+                }`}
+              >
+                <p className="text-[13px] font-semibold text-bg-dark-secondary mb-2">
+                  {item.question}
+                </p>
+                <div className="flex flex-col gap-1">
+                  <span className={`text-[12px] ${item.is_correct ? "text-teal" : "text-red-400"}`}>
+                    إجابتك: {item.user_answer}
+                    {item.is_correct ? " ✓" : " ✗"}
+                  </span>
+                  {!item.is_correct && (
+                    <span className="text-[12px] text-teal">
+                      الإجابة الصحيحة: {item.correct_answer}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -144,9 +125,6 @@ function ReviewPage() {
         <div className="bg-bg-dark rounded-[20px] px-8 py-7 flex flex-col gap-4">
           <div className="text-[11px] font-bold text-text-on-dark/50 tracking-widest uppercase">
             {LABELS.fitLabel} {jobTitleAr}
-          </div>
-          <div className="text-[22px] font-bold text-text-on-dark">
-            {LABELS.fitBased} {getFitLabel(review.fitPercent)}
           </div>
           <p className="text-[13px] text-text-on-dark/60 leading-[1.8] max-w-2xl">
             {review.fitSummary}
