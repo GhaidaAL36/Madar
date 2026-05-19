@@ -6,8 +6,8 @@ function Navbar() {
   const { isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = async () => {
-  await logout();
-  navigate("/");
+    await logout();
+    navigate("/");
   };
 
   return (
@@ -48,23 +48,31 @@ function Navbar() {
 
       {/* login/singup btns */}
       {isAuthenticated ? (
-      <button
-        onClick={handleLogout}
-        className="text-[13px] font-medium text-text-muted px-4.5 py-1.75 rounded-md border border-white/15 transition-all duration-200 hover:text-white hover:border-white/35"
-      >
-        تسجيل الخروج
-      </button>
-    ) : (
-      <div className="flex items-center gap-3">
-        <Link to="/auth?mode=login" className="text-[13px] font-medium text-text-muted no-underline px-4.5 py-1.75 rounded-md border border-white/15 transition-all duration-200 hover:text-white hover:border-white/35">
-          تسجيل الدخول
-        </Link>
-        <Link to="/auth?mode=signup" className="text-[13px] font-bold text-bg-dark no-underline px-5 py-2 rounded-md bg-gold transition-colors duration-200 hover:bg-gold-light">
-          إنشاء حساب
-        </Link>
-      </div>
-    )}
-        </nav>
+        <div className="flex items-center gap-4">
+          <Link
+            to={localStorage.getItem("role") === "admin" ? "/admin" : "/profile"}
+            className="text-[13px] font-bold text-bg-dark no-underline px-5 py-2 rounded-md bg-gold transition-colors duration-200 hover:bg-gold-light"
+          >
+            {localStorage.getItem("role") === "admin" ? "لوحة التحكم" : "حسابي"}
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="text-[13px] font-medium text-text-muted transition-colors duration-200 hover:text-white"
+          >
+            تسجيل الخروج
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-3">
+          <Link to="/auth?mode=login" className="text-[13px] font-medium text-text-muted no-underline px-4.5 py-1.75 rounded-md border border-white/15 transition-all duration-200 hover:text-white hover:border-white/35">
+            تسجيل الدخول
+          </Link>
+          <Link to="/auth?mode=signup" className="text-[13px] font-bold text-bg-dark no-underline px-5 py-2 rounded-md bg-gold transition-colors duration-200 hover:bg-gold-light">
+            إنشاء حساب
+          </Link>
+        </div>
+      )}
+    </nav>
   );
 }
 
