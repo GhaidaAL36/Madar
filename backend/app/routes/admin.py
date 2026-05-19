@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from app.middleware.admin_guard import require_admin
 from app.models import User, Job
 from app.extensions import db
@@ -49,3 +49,16 @@ def delete_job(job_id):
     db.session.delete(job)
     db.session.commit()
     return jsonify({"message": "Job deleted"}), 200
+
+@admin_bp.route('/jobs/<string:job_id>/skills', methods=['PATCH'])
+@require_admin
+def update_job_skills(job_id):
+    job = db.session.get(Job, job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    data = request.get_json()
+    job.skills = data.get("skills", [])
+    db.session.commit()
+    
+    return jsonify({"message": "Skills updated", "skills": job.skills}), 200
