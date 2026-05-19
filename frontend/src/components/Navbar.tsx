@@ -32,7 +32,7 @@ function Navbar() {
             to="/#jobs"
             className="text-sm text-text-muted no-underline transition-colors duration-200 hover:text-white"
           >
-            المهن
+            المجالات
           </Link>
         </li>
 

@@ -2,20 +2,20 @@ const steps = [
   {
     number: "1",
     title: "اختر مجالاً",
-    description: "تصفح مهن متنوعة.",
+    description: "تصفح مجالات متنوعة.",
     color: "bg-bg-dark-secondary text-white",
   },
   {
     number: "2",
-    title: "جرّب مهمة حقيقية",
-    description: "يضعك الذكاء الاصطناعي في موقف حقيقي من تلك المهنة.",
+    title: "جرّب مهمة ",
+    description: "يصنع الذكاء الاصطناعي مهمة من ذلك المجال.",
     color: "bg-teal text-white",
   },
   {
     number: "3",
     title: "اكتشف توافقك",
     description:
-      "تحصل على تقييم شخصي: نقاط قوتك، مجالات التطوير، ونسبة توافقك مع المهنة.",
+      "تحصل على تقييم، ونسبة توافقك مع المجال.",
     color: "bg-gold text-bg-dark",
   },
 ];

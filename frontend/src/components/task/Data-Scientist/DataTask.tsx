@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { CodeTaskData, CodeTaskQuestion } from "@/types/CodeTask";
 import { taskService } from "@/services/taskService";
+import "@/style/scrollbar.css";
 
 interface Props {
   jobId: string;
@@ -41,7 +42,7 @@ export default function DataTask({ jobId, taskDbId, simulationId, generatedConte
   };
 
   return (
-    <div className="flex flex-1 h-full overflow-hidden bg-bg-dark" dir="rtl">
+    <div className="flex flex-1 h-full overflow-hidden bg-bg-dark custom-scrollbar" dir="rtl">
 
       <div className="flex flex-col flex-1 overflow-hidden border-l border-white/8">
 

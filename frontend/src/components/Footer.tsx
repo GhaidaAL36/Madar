@@ -4,7 +4,7 @@ function Footer() {
       <div>
         <div className="mb-2 text-[22px] font-bold text-white">مدار</div>
         <p className="max-w-55 text-[13px] leading-[1.75] text-text-muted/50">
-          منصة تساعدك على اكتشاف المسار المهني الأنسب من خلال محاكاة مهام
+          منصة تساعدك على اكتشاف المسار المهني الأنسب من خلال  مهام
           بالذكاء الاصطناعي.
         </p>
       </div>
@@ -17,7 +17,7 @@ function Footer() {
               href="#jobs"
               className="text-[13px] text-text-muted/50 no-underline transition-colors duration-200 hover:text-white"
             >
-              استكشف المهن
+              استكشف المجالات
             </a>
           </li>
           <li>

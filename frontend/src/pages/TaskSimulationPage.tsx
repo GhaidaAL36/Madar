@@ -9,7 +9,6 @@ import TaskDetails from "../components/task/TaskDetails";
 import CodeTask from "../components/task/Software-Engineer/CodeTask";
 import DataTask from "../components/task/Data-Scientist/DataTask";
 import PMTask from "../components/task/product-manager/PMTask";
-import ConfirmModal from "../components/task/ConfirmModal";
 
 export default function TaskSimulationPage() {
   const navigate = useNavigate();
@@ -22,14 +21,6 @@ export default function TaskSimulationPage() {
     setAnswer(answer);
     setShowConfirm(true);
   };
-
-  const handleConfirm = async () => {
-    setShowConfirm(false);
-    await taskService.submitSimulation(jobId!, taskDbId!, simulationId!, [], {});
-    navigate(`/jobs/${jobId}/tasks/${taskId}/review?sim=${simulationId}&task=${taskDbId}`);
-  };
-
-  const handleCancel = () => setShowConfirm(false);
 
   if (loading) return (
     <div className="min-h-screen bg-bg-dark flex items-center justify-center">
@@ -75,11 +66,8 @@ export default function TaskSimulationPage() {
 
   return (
     <>
-      {showConfirm && (
-        <ConfirmModal onConfirm={handleConfirm} onCancel={handleCancel} />
-      )}
       <div className="flex flex-col h-screen bg-bg-dark">
-        <TaskNavbar onSubmit={() => handleSubmitRequest(answer)} />
+        <TaskNavbar  />
         <div className="flex flex-1 overflow-hidden">
           <TaskDetails task={task} />
           {renderTaskArea()}
