@@ -15,7 +15,8 @@ export function useAuth() {
 
     authService.login(payload)
       .then((data) => {
-        setUser(data.user); // ← add this
+        setUser(data.user);
+        localStorage.setItem("role", data.user.role ?? "");
 
         const role = data.user.role?.trim().toLowerCase();
         const destination = role === "admin" ? "/admin" : "/profile";

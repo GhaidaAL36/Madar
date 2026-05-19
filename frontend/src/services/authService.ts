@@ -45,6 +45,7 @@ export const authService = {
     } catch {
     } finally {
       localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem("role"); 
     }
   },
 
