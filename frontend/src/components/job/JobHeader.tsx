@@ -1,15 +1,35 @@
 import type { Job } from "../../types/Job";
 import StructuredDescription from "./StructuredDescription";
+import { useAuthStore } from "@/store/authStore";
+import { useProfile } from "@/hooks/useProfileApi";
 
 const LABELS = {
   requiredSkills: "المهارات المطلوبة",
+  match: "تطابق مع اهتماماتك",
 } as const;
+
+const getMatchColor = (match: number): string => {
+  if (match >= 75) return "var(--color-teal)";
+  if (match >= 55) return "var(--color-gold)";
+  return "var(--color-text-muted)";
+};
 
 interface Props {
   job: Job;
 }
 
 const JobHeader = ({ job }: Props) => {
+  const { isAuthenticated } = useAuthStore();
+  const { profileInterests } = useProfile();
+
+  const matchRate = (() => {
+    if (!isAuthenticated || !profileInterests.length || !job.skills?.length) return null;
+    const matched = job.skills.filter((s) => profileInterests.includes(s)).length;
+    return Math.round((matched / job.skills.length) * 100);
+  })();
+
+  const matchColor = matchRate !== null ? getMatchColor(matchRate) : undefined;
+
   return (
     <header
       dir="ltr"
@@ -48,16 +68,30 @@ const JobHeader = ({ job }: Props) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 p-5">
-            {(job.skills ?? []).map((skill) => (
-              <div key={skill} className="flex items-center justify-end gap-2">
-                <span className="bg-bg-card border border-teal/20 rounded-lg px-3 py-1.5 text-text-primary text-xs font-medium text-right leading-relaxed">
-                  {skill}
-                </span>
-                <span className="w-2 h-2 rounded-full bg-teal shrink-0" />
-              </div>
-            ))}
+          <div className="grid grid-cols-2 gap-3 p-5" dir="rtl">
+            {(job.skills ?? []).map((skill) => {
+              const isMatch = profileInterests.includes(skill);
+              return (
+                <div key={skill} className="flex items-center justify-end gap-2">
+                  <span className={`bg-bg-card border rounded-lg px-3 py-1.5 text-xs font-medium text-right leading-relaxed transition-colors ${isMatch ? "border-teal text-teal" : "border-teal/20 text-text-primary"
+                    }`}>
+                    {skill}
+                  </span>
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${isMatch ? "bg-teal" : "bg-teal/30"}`} />
+                </div>
+              );
+            })}
           </div>
+
+          {/* Match Rate */}
+          {matchRate !== null && (
+            <div className="px-5 py-4 border-t border-teal/20 flex items-center justify-end gap-2">
+              <span className="text-xs text-text-muted">{LABELS.match}</span>
+              <span className="text-sm font-bold" style={{ color: matchColor }}>
+                {matchRate}%
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </header>
