@@ -71,6 +71,27 @@ def delete_user(user_id):
         return jsonify({"error": "User not found"}), 404
     if user.role == "admin":
         return jsonify({"error": "Cannot delete an admin"}), 403
+    
+    if user.profile:
+        db.session.delete(user.profile)
+    
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted"}), 200
+
+@admin_bp.route('/jobs', methods=['POST'])
+@require_admin
+def add_job():
+    data = request.get_json()
+    job = Job(
+        id=data["id"],
+        icon=data["icon"],
+        title_ar=data["title_ar"],
+        title_en=data["title_en"],
+        description_primary=data["description_primary"],
+        description_secondary=data["description_secondary"],
+        skills=data.get("skills", []),
+    )
+    db.session.add(job)
+    db.session.commit()
+    return jsonify({"message": "Job created", "id": job.id}), 201
