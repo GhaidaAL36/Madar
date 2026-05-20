@@ -62,3 +62,15 @@ def update_job_skills(job_id):
     db.session.commit()
     
     return jsonify({"message": "Skills updated", "skills": job.skills}), 200
+
+@admin_bp.route('/users/<string:user_id>', methods=['DELETE'])
+@require_admin
+def delete_user(user_id):
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    if user.role == "admin":
+        return jsonify({"error": "Cannot delete an admin"}), 403
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "User deleted"}), 200
