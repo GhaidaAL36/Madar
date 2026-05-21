@@ -5,8 +5,9 @@ import { taskService } from "@/services/taskService";
 import TableTab from "./dataTabs/TableTab";
 import ChartTab from "./dataTabs/ChartTab";
 import StatsTab from "./dataTabs/StatsTab";
-import AnswerPanel from "./AnswerPanel";
+import AnswerPanel from "../AnswerPanel";
 import HintsPanel from "../HintsPanel";
+import "@/style/scrollbar.css"
 
 type TabKey = "table" | "chart" | "stats";
 
@@ -58,18 +59,15 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
   );
 
   return (
-    <div className="flex flex-1 h-full bg-bg-dark overflow-hidden">
+    <div className="flex flex-1 h-full bg-bg-dark overflow-hidden custom-scrollbar">
 
-      {/* LEFT — data viewer (table / chart / stats) */}
       <div className="flex flex-col flex-1 min-w-0 border-l border-white/8">
-        {/* badge */}
         <div dir="rtl" className="flex items-center gap-3 px-5 py-3 border-b border-white/8 shrink-0">
           <span className="text-[11px] font-bold px-2.5 py-1 rounded-full border bg-teal/15 text-teal border-teal/25">
             تحليل بيانات
           </span>
         </div>
 
-        {/* tab bar */}
         <div dir="rtl" className="flex items-center gap-1 px-4 py-2 border-b border-white/8 shrink-0">
           {TABS.map((tab) => {
             const isActive = tab.key === activeTab;
@@ -89,7 +87,6 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
           })}
         </div>
 
-        {/* tab content — scrollable */}
         <div className="flex-1 overflow-auto min-h-0">
           {activeTab === "table" && <TableTab columns={dataTask.columns} rows={dataTask.rows} />}
           {activeTab === "chart" && <ChartTab chartType={dataTask.chartType} chartData={dataTask.chartData} />}
@@ -97,7 +94,6 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
         </div>
       </div>
 
-      {/* RIGHT */}
       <div className="flex flex-col w-96 shrink-0 h-full overflow-hidden border-r border-white/8">
         <AnswerPanel
           questions={dataTask.questions ?? []}
