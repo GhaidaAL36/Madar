@@ -6,99 +6,77 @@ class CleanDataTask:
     def __init__(self):
         self.client = Groq(api_key=os.getenv("GROQ_API_KEY"))
         self.model = "llama-3.3-70b-versatile"
-        self.task_name = "تنظيف البيانات"
+        self.task_name = "تحليل البيانات"
         self.duration = "20-25 دقيقة"
 
-    def explainConcept(self, major_explanation: str) -> dict:
-        prompt = f"""
-You are preparing a student for a Data Cleaning task in Data Science.
-The student already read this explanation about the major:
-{major_explanation}
+    def generateTask(self) -> dict:
+        prompt = """
+You are creating a data analysis task for a Data Science student in Arabic.
 
-All text must be in Arabic except programming terms like null, None, Data Cleaning, etc.
-
-Respond ONLY in valid JSON, no extra text:
-{{
-  "concept_title": "تنظيف البيانات Data Cleaning",
-  "concept_explanation": "شرح بسيط بالعربي لما هو تنظيف البيانات، 3-4 جمل، بناءً على ما قرأه الطالب",
-  "real_world_example": "مثال حقيقي بالعربي لبيانات غير نظيفة وكيف تم تنظيفها",
-  "what_will_be_tested": "أخبر الطالب بالعربي بالضبط ماذا سيفعل في هذه المهمة"
-}}
-"""
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            max_tokens=800
-        )
-        content = response.choices[0].message.content.strip()
-        content = content.replace("```json", "").replace("```", "").strip()
-        return json.loads(content)
-
-    def generateTask(self, concept: dict, major_explanation: str) -> dict:
-        prompt = f"""
-You are creating a beginner data cleaning task for a Data Science student.
-The student read this major explanation:
-{major_explanation}
-
-And just learned this concept:
-{json.dumps(concept, indent=2, ensure_ascii=False)}
+Generate a realistic and detailed company scenario with messy data that needs to be analyzed.
 
 IMPORTANT RULES:
-- All text must be in Arabic except programming terms like null, None, Data Cleaning, etc.
-- Generate a small messy dataset with 5 rows and 3 columns: الاسم, العمر, الراتب
-- The dataset must contain: exactly ONE null value, exactly ONE obviously wrong value (age 999 ONLY, no other wrong values), and ONE duplicate row
-- All other values in the table must be completely normal and realistic
-- Never use 0 or negative numbers, only use 999 for wrong age
-- The null value and the wrong value must be in DIFFERENT rows, never in the same row
-- The duplicate rows must be placed next to each other so the user can clearly see the repetition
-- Each problem must be in a different row so each question has a unique answer
-- The questions must be directly about the generated dataset
-- A student who only read the explanation should be able to answer all questions
-- The correct answer must be obvious just from looking at the table
-- Use real common Arabic names like أحمد, سارة, محمد, نورة, خالد, ريم, عمر
+- All text must be in Arabic except programming terms like null, None, etc.
+- The context must be long and detailed — at least 5-6 sentences describing the company, its work, the situation, and what is expected from the student
+- The context must feel like a real work scenario the student is living
+- The table must have 5 columns and 10 rows
+- The data must contain: at least 2 null values, at least 1 obviously wrong value (like age 999), at least 1 duplicate row
+- Wrong values and null values must be in DIFFERENT rows
+- The duplicate rows must be placed next to each other
+- Use real Arabic names for people
+- keyFindings must describe the exact problems found in the data
+- Questions must be generated based on the actual problems in the generated data, not generic questions
+- Each question must reference something specific from the table
+- Never use the same question twice
+- Questions must be open text, no multiple choice
+- STRICTLY use Arabic only, no Vietnamese, no Spanish, no English words except programming terms
+- All names must be proper Arabic names only, no Latin characters in names
+- NEVER mix any non-Arabic characters in text fields — no Chinese, no Vietnamese, no Spanish
+- chartData must be meaningful — show the distribution of one of the columns, for example count of each city or nationality, with real values not 0
+- stats must have real calculated values from the data, not placeholder text
+- stats labels must be pure Arabic only, no Russian, no Chinese, no English words except programming terms
+- Example of correct stat: {"label": "متوسط العمر", "value": "32"}
+- Example of wrong stat: {"label": "ال сред العمر", "value": "32"}
+- keyFindings must be 100% in Arabic, never in English
+- questions must be 100% in Arabic, never mix English words like "age 999" — say "العمر 999" instead
 
 Respond ONLY in valid JSON, no extra text:
-{{
-  "task_title": "تنظيف البيانات",
-  "task_description": "وصف قصير بالعربي لما سيفعله الطالب",
-  "estimated_time": "20-25 دقيقة",
-  "instructions": "تعليمات بسيطة بالعربي",
-  "table_columns": ["الاسم", "العمر", "الراتب"],
-  "table": [
-    {{"الاسم": "أحمد", "العمر": 25, "الراتب": 5000}},
-    {{"الاسم": "سارة", "العمر": 999, "الراتب": 7000}},
-    {{"الاسم": "محمد", "العمر": 30, "الراتب": null}},
-    {{"الاسم": "نورة", "العمر": 28, "الراتب": 6000}},
-    {{"الاسم": "نورة", "العمر": 28, "الراتب": 6000}}
+{
+  "task_title": "تحليل البيانات",
+  "context": "سياق مفصل وطويل بالعربي — على الأقل 5-6 جمل تصف الشركة وطبيعة عملها والموقف الذي يجد الطالب نفسه فيه وماذا يُتوقع منه",
+  "instructions": "تعليمات واضحة بالعربي",
+  "chartType": "bar",
+  "columns": ["العمود1", "العمود2", "العمود3", "العمود4", "العمود5"],
+  "rows": [
+    {"العمود1": "قيمة", "العمود2": "قيمة", "العمود3": "قيمة", "العمود4": "قيمة", "العمود5": "قيمة"}
+  ],
+  "chartData": [
+    {"label": "تسمية", "value": 0}
+  ],
+  "stats": [
+    {"label": "متوسط العمر", "value": "احسب المتوسط من البيانات"},
+    {"label": "أعلى عمر", "value": "اكتب أعلى قيمة عمر"},
+    {"label": "إجمالي السجلات", "value": "اكتب العدد الإجمالي"},
+    {"label": "عدد القيم المفقودة", "value": "اكتب عدد القيم المفقودة"},
+    {"label": "عدد السجلات المكررة", "value": "اكتب عدد السجلات المكررة"}
+  ]
+  "keyFindings": [
+    "ملاحظة أولى عن مشاكل البيانات بالتفصيل",
+    "ملاحظة ثانية عن مشاكل البيانات بالتفصيل",
+    "ملاحظة ثالثة عن مشاكل البيانات بالتفصيل"
   ],
   "questions": [
-    {{
-      "id": 1,
-      "question": "سؤال بالعربي عن القيمة الخاطئة في الجدول",
-      "choices": ["A. خيار أول", "B. خيار ثاني", "C. خيار ثالث", "D. خيار رابع"],
-      "correct_answer": "A"
-    }},
-    {{
-      "id": 2,
-      "question": "سؤال بالعربي عن القيمة المفقودة في الجدول",
-      "choices": ["A. خيار أول", "B. خيار ثاني", "C. خيار ثالث", "D. خيار رابع"],
-      "correct_answer": "C"
-    }},
-    {{
-      "id": 3,
-      "question": "سؤال بالعربي عن الصف المكرر في الجدول",
-      "choices": ["A. خيار أول", "B. خيار ثاني", "C. خيار ثالث", "D. خيار رابع"],
-      "correct_answer": "B"
-    }}
+    {"id": 1, "question": "سؤال مفتوح بالعربي مباشرة عن مشكلة محددة موجودة في الجدول"},
+    {"id": 2, "question": "سؤال مفتوح بالعربي عن كيفية تصحيح مشكلة محددة في الجدول"},
+    {"id": 3, "question": "سؤال مفتوح بالعربي عن أولوية معالجة المشاكل بناءً على البيانات الموجودة"}
   ]
-}}
+}
 """
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
-            max_tokens=1500
+            max_tokens=2000
         )
         content = response.choices[0].message.content.strip()
         content = content.replace("```json", "").replace("```", "").strip()

@@ -10,7 +10,6 @@ from ai.task.software_engineering.code_review import CodeReviewTask
 from ai.task.software_engineering.requirements import RequirementsTask
 from ai.task.software_engineering.performance import PerformanceTask
 from ai.task.data_science.clean_data import CleanDataTask
-from ai.task.data_science.build_model import BuildModelTask
 
 evaluation_service = EvaluationService()
 
@@ -23,8 +22,7 @@ tasks = {
         "performance": PerformanceTask()
     },
     "data-scientist": {
-        "clean_data": CleanDataTask(),
-        "build_model": BuildModelTask()
+        "clean_data": CleanDataTask()
     }
 }
 
@@ -43,10 +41,15 @@ def getJob(job_id: str) -> dict:
     return job.get(job_id)
 
 def getTask(job_id: str, task_id: str) -> dict:
-    job_explanation = job[job_id]["explanation"]
+    major_explanation = job[job_id]["explanation"]
     task = tasks[job_id][task_id]
-    concept = task.explainConcept(job_explanation)
-    return task.generateTask(concept, job_explanation)
+    if hasattr(task, 'explainConcept'):
+        concept = task.explainConcept(major_explanation)
+        return task.generateTask(concept, major_explanation)
+    return task.generateTask()
 
 def evaluateResponse(questions: list, user_answers: dict) -> dict:
     return evaluation_service.evaluateResponse(questions, user_answers)
+
+def evaluateOpenResponse(task_data: dict, user_answers: dict) -> dict:
+    return evaluation_service.evaluateOpenResponse(task_data, user_answers)
