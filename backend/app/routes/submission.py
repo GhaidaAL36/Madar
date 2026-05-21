@@ -32,7 +32,7 @@ def submit_simulation(job_id, task_id, simulation_id):
     questions    = data.get("questions", [])
     user_answers = data.get("user_answers", {})
 
-    if task.type in ("clean_data", "build_model"):
+    if task.type in ("clean_data", "build_model", "review_comments", "review_document", "ux_problem", "stakeholder_notes"):
         result = evaluation_service.evaluateOpenResponse(task.content, user_answers)
     else:
         result = evaluateResponse(questions, user_answers)

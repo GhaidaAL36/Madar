@@ -84,3 +84,25 @@ def get_code_task(job_id, task_id):
         "hints":          content.get("hints", []),
         "expectedOutput": content.get("expected_output", ""),
     }), 200
+
+@tasks_bp.route("/<job_id>/tasks/<int:task_id>/pm", methods=["GET"])
+def get_pm_task(job_id, task_id):
+    task = Task.query.filter_by(id=task_id, job_id=job_id).first()
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+
+    content = task.content or {}
+    
+
+    return jsonify({
+        "taskType":     task.type,
+        "instructions": content.get("instructions", ""),
+        "hints":        content.get("hints", []),
+        "comments":     content.get("comments", []),
+        "documentTitle": content.get("task_title", ""),
+        "sections":     content.get("sections", []),
+        "uxDescription": content.get("ux_description", ""),
+        "uxUserJourney": content.get("ux_user_journey", []),
+        "questions":    content.get("questions", []),
+        "context":      content.get("context", ""),
+    }), 200
