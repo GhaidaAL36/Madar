@@ -6,6 +6,7 @@ interface Props {
 }
 
 export default function CommentsView({ comments }: Props) {
+  console.log(">>> comments:", comments);
   return (
     <div
       className="custom-scrollbar h-full overflow-auto px-5 py-4 flex flex-col gap-3"
