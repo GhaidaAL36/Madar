@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { taskService } from "../services/taskService";
 import type { SimulationTask } from "../types/SimulationTask";
 import type { CodeTaskData } from "../types/CodeTask";
@@ -13,21 +13,24 @@ interface UseTaskSimulationResult {
 }
 
 export function useTaskSimulation(jobId: string, aiTaskId: string): UseTaskSimulationResult {
-  const [task, setTask]                         = useState<SimulationTask | null>(null);
-  const [taskDbIdState, setTaskDbId]            = useState<number | null>(null);
-  const [simulationId, setSimulationId]         = useState<string | null>(null);
+  const [task, setTask] = useState<SimulationTask | null>(null);
+  const [taskDbIdState, setTaskDbId] = useState<number | null>(null);
+  const [simulationId, setSimulationId] = useState<string | null>(null);
   const [generatedContent, setGeneratedContent] = useState<CodeTaskData | null>(null);
-  const [loading, setLoading]                   = useState(true);
-  const [error, setError]                       = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const calledRef = useRef(false);
 
   useEffect(() => {
     if (!jobId || !aiTaskId) return;
+    if (calledRef.current) return;
+    calledRef.current = true;
 
     taskService
       .generateTask(jobId, aiTaskId)
       .then((codeTask) => {
         setTaskDbId(codeTask.taskDbId);
-        setGeneratedContent(codeTask); 
+        setGeneratedContent(codeTask);
         return taskService.createSimulation(jobId, codeTask.taskDbId)
           .then(({ id: simId }) => {
             setSimulationId(simId);
@@ -41,9 +44,9 @@ export function useTaskSimulation(jobId: string, aiTaskId: string): UseTaskSimul
                   evaluation_criteria: (task.evaluation_criteria ?? []).map((c: any, i: number) =>
                     typeof c === "string" ? { id: String(i), label: c } : c
                   ),
-                  starterCode:  codeTask.starterCode,
+                  starterCode: codeTask.starterCode,
                   instructions: codeTask.instructions,
-                  questions:    codeTask.questions,
+                  questions: codeTask.questions,
                 });
               });
           });

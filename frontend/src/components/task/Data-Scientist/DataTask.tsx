@@ -37,7 +37,7 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
         questions: dataTask.questions,
         user_answers: answers,
       });
-      navigate(`/jobs/${jobId}/tasks/${taskDbId}/review?sim=${simulationId}`);
+      navigate(`/jobs/${jobId}/tasks/${taskDbId}/review?sim=${simulationId}&task=${taskDbId}`);
     } catch (e) {
       console.error(e);
     } finally {
@@ -78,8 +78,8 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[12px] font-bold transition-all cursor-pointer border-0 ${isActive
-                    ? "bg-white/10 text-text-on-dark"
-                    : "bg-transparent text-text-muted hover:text-text-on-dark"
+                  ? "bg-white/10 text-text-on-dark"
+                  : "bg-transparent text-text-muted hover:text-text-on-dark"
                   }`}
               >
                 <i className={`fa-solid ${tab.icon} text-[11px]`} />
@@ -97,7 +97,8 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col w-96 shrink-0 overflow-y-auto border-r border-white/8">
+      {/* RIGHT */}
+      <div className="flex flex-col w-96 shrink-0 h-full overflow-hidden border-r border-white/8">
         <AnswerPanel
           questions={dataTask.questions ?? []}
           onSubmit={handleSubmit}

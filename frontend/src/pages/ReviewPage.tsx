@@ -22,7 +22,7 @@ function ReviewPage() {
   const navigate = useNavigate();
   const { jobId, taskId } = useParams<{ jobId: string; taskId: string }>();
   const [searchParams] = useSearchParams();
-  const simId    = searchParams.get("sim") ?? "";
+  const simId = searchParams.get("sim") ?? "";
   const taskDbId = searchParams.get("task") ?? "";
 
   const { data, loading, error } = useReview(jobId ?? "", taskDbId, simId);
@@ -41,7 +41,7 @@ function ReviewPage() {
 
   const { review, jobTitleAr, taskTitle, taskDuration } = data;
   const correctCount = review.answerReview.filter((a) => a.is_correct).length;
-  const total        = review.answerReview.length;
+  const total = review.answerReview.length;
 
   return (
     <div className="min-h-screen bg-bg-light" dir="rtl">
@@ -96,11 +96,10 @@ function ReviewPage() {
             {review.answerReview.map((item) => (
               <div
                 key={item.id}
-                className={`px-4 py-3 rounded-xl border ${
-                  item.is_correct
+                className={`px-4 py-3 rounded-xl border ${item.is_correct
                     ? "bg-teal/8 border-teal/20"
                     : "bg-red-500/5 border-red-400/20"
-                }`}
+                  }`}
               >
                 <p className="text-[13px] font-semibold text-bg-dark-secondary mb-2">
                   {item.question}
@@ -112,7 +111,7 @@ function ReviewPage() {
                   </span>
                   {!item.is_correct && (
                     <span className="text-[12px] text-teal">
-                      الإجابة الصحيحة: {item.correct_answer}
+                      الإجابة الصحيحة: {item.correct_feedback ?? item.correct_answer}
                     </span>
                   )}
                 </div>

@@ -2,7 +2,8 @@ export interface AnswerReviewItem {
   id: number;
   question: string;
   user_answer: string;
-  correct_answer: string;
+  correct_answer?: string;    
+  correct_feedback?: string; 
   is_correct: boolean;
 }
 
