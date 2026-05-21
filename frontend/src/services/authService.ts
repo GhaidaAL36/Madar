@@ -43,9 +43,9 @@ export const authService = {
     try {
       await api.post("/auth/logout");
     } catch {
-      // clear locally regardless
     } finally {
       localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem("role"); 
     }
   },
 

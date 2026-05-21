@@ -1,24 +1,17 @@
-export type ChartType = "bar" | "line";
-
-export type DataRow = Record<string, string | number>;
-
-export interface ChartPoint {
-  label: string;
-  value: number;
-}
-
-export interface StatItem {
-  label: string;
-  value: string | number;
+export interface DataTaskQuestion {
+  id: number;
+  question: string;
+  choices: string[];
+  correct_answer: string;
 }
 
 export interface DataTaskData {
+  taskDbId: number;
+  title: string;
+  description: string;
   instructions: string;
-  chartType: ChartType;
   columns: string[];
-  rows: DataRow[];
-  chartData: ChartPoint[];
-  stats: StatItem[];
-  keyFindings: string[];
-  hints: string[];
+  rows: Record<string, string | number | null>[];
+  scenario?: string;       // only for build_model
+  questions: DataTaskQuestion[];
 }

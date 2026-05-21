@@ -15,7 +15,11 @@ def create_app():
     jwt.init_app(app)
     bcrypt.init_app(app)
 
-    CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"], supports_credentials=True, allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+    CORS(app, 
+     origins=["http://localhost:5173", "http://127.0.0.1:5173"], 
+     supports_credentials=True, 
+     allow_headers=["Content-Type", "Authorization"], 
+     methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
     from .models import User, Profile, Job, Task, Simulation, Submission, Review
 
     with app.app_context():
@@ -32,6 +36,9 @@ def create_app():
 
         from .routes.admin import admin_bp
         app.register_blueprint(admin_bp, url_prefix="/api/admin")
+
+        from .routes.ai import ai_bp
+        app.register_blueprint(ai_bp, url_prefix="/api/ai")
 
         @app.route("/")
         def home():

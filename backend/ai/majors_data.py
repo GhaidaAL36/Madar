@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Job = {
+=======
+job = {
+>>>>>>> f1fe7f7158dae5661cd40905a9df8b00f01de55b
     "software-engineer": {
         "id": "software-engineer",
         "title": "مهندس برمجيات",

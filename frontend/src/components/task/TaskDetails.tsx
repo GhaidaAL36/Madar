@@ -137,44 +137,6 @@ export default function TaskDetails({ task }: Props) {
         </p>
       </SectionCard>
 
-      <SectionCard
-        title={LABELS.expectSection}
-        icon={<i className="fa-solid fa-list-check" />}
-      >
-        <ul className="flex flex-col gap-2.5 mt-2">
-          {expectations.map((exp) => (
-            <ExpectationItem key={exp.id} exp={exp} onToggle={toggle} />
-          ))}
-        </ul>
-
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-semibold text-teal">
-              {LABELS.progress}
-            </span>
-            <span className="text-xs text-text-muted">
-              {completed} / {total}
-            </span>
-          </div>
-          <div className="w-full h-1.25 rounded-full overflow-hidden bg-bg-card-secondary">
-            <div
-              className="h-full rounded-full bg-gold transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      </SectionCard>
-
-      <SectionCard
-        title={LABELS.criteriaSection}
-        icon={<i className="fa-solid fa-list-ul" />}
-      >
-        <ul className="flex flex-col gap-2 mt-2">
-          {task.evaluation_criteria.map((criterion) => (
-            <CriterionItem key={criterion.id} criterion={criterion} />
-          ))}
-        </ul>
-      </SectionCard>
     </aside>
   );
 }

@@ -21,10 +21,10 @@ function App() {
       <Route path="/jobs/:jobId" element={<JobPage />} />
       <Route path="/not-found" element={<div>Not Found</div>} />
       <Route path="/jobs/:jobId/tasks/:taskId" element={<TaskSimulationPage />} />
-      <Route path="/jobs/:jobId/tasks/:taskId/simulations/:simulationId/review" element={<ReviewPage />} />
+      <Route path="/jobs/:jobId/tasks/:taskId/review" element={<ReviewPage />} />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>}/>
+      <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
     </Routes>
   );
 }

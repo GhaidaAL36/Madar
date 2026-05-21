@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { useJobs } from "../../hooks/useJobsApi";
 
 const LABELS = {
-  explore: "استكشف المهن",
+  explore: "استكشف المجالات",
   heading: "أي المجالات يناسبك؟",
-  subheading: "تصفح المهن وابدأ المحاكاة",
+  subheading: "تصفح المهن وابدأ المهام",
 } as const;
 
 function Jobs() {

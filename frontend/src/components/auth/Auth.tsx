@@ -12,7 +12,6 @@ const LABELS = {
   name: "الاسم",
   email: "البريد الإلكتروني",
   password: "كلمة المرور",
-  forgotPassword: "نسيت كلمة المرور؟",
   loginBtn: "تسجيل الدخول ←",
   signupBtn: "إنشاء الحساب ←",
 } as const;
@@ -81,7 +80,7 @@ function Auth() {
                     href="#"
                     className="text-[12px] text-teal no-underline hover:text-teal-light transition-colors duration-200"
                   >
-                    {LABELS.forgotPassword}
+
                   </a>
                 )}
               </div>

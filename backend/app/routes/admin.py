@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from app.middleware.admin_guard import require_admin
 from app.models import User, Job
 from app.extensions import db
@@ -49,3 +49,49 @@ def delete_job(job_id):
     db.session.delete(job)
     db.session.commit()
     return jsonify({"message": "Job deleted"}), 200
+
+@admin_bp.route('/jobs/<string:job_id>/skills', methods=['PATCH'])
+@require_admin
+def update_job_skills(job_id):
+    job = db.session.get(Job, job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    data = request.get_json()
+    job.skills = data.get("skills", [])
+    db.session.commit()
+    
+    return jsonify({"message": "Skills updated", "skills": job.skills}), 200
+
+@admin_bp.route('/users/<string:user_id>', methods=['DELETE'])
+@require_admin
+def delete_user(user_id):
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    if user.role == "admin":
+        return jsonify({"error": "Cannot delete an admin"}), 403
+    
+    if user.profile:
+        db.session.delete(user.profile)
+    
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "User deleted"}), 200
+
+@admin_bp.route('/jobs', methods=['POST'])
+@require_admin
+def add_job():
+    data = request.get_json()
+    job = Job(
+        id=data["id"],
+        icon=data["icon"],
+        title_ar=data["title_ar"],
+        title_en=data["title_en"],
+        description_primary=data["description_primary"],
+        description_secondary=data["description_secondary"],
+        skills=data.get("skills", []),
+    )
+    db.session.add(job)
+    db.session.commit()
+    return jsonify({"message": "Job created", "id": job.id}), 201

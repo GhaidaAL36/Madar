@@ -31,17 +31,17 @@ export const jobService = {
   },
 
   getTasks: async (jobId: string): Promise<Task[]> => {
-  const { data } = await api.get(`/jobs/${jobId}/tasks`);
-  return data.map((task: any) => ({
-    id: task.id,
-    type: task.type,
-    title: task.title,
-    fullTitle: task.full_title,       
-    duration: task.duration,
-    timeRange: task.time_range,       
-    description: task.description,
-    willLearn: task.will_learn,       
-    willDo: task.will_do,             
-  }));
-},
+    const { data } = await api.get(`/ai/jobs/${jobId}`);
+    return data.tasks.map((task: any) => ({
+      id: task.id,           
+      type: task.id,         
+      title: task.title,
+      fullTitle: task.title,
+      duration: task.duration,
+      timeRange: task.duration,
+      description: "",
+      willLearn: [],
+      willDo: [],
+    }));
+  },
 };

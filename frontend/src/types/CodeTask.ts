@@ -1,11 +1,22 @@
-import type { TaskType } from "./Job";
 export type CodeTaskType = "write-code" | "fix-code" | "clean-code";
 
+export interface CodeTaskQuestion {
+  id: number;
+  question: string;
+  choices: string[];
+  correct_answer: string;
+}
+
 export interface CodeTaskData {
-  taskType: TaskType;
+  taskDbId: number;
+  title: string;
+  description: string;
   language: string;
   instructions: string;
   starterCode: string;
-  hints: string[];
-  expectedOutput: string;
+  estimatedTime: string;
+  questions: CodeTaskQuestion[];
+  columns?: string[];
+  rows?: Record<string, string | number | null>[];
+  scenario?: string;
 }

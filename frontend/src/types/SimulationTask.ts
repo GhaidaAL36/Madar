@@ -13,16 +13,14 @@ export interface EvaluationCriterion {
 
 export interface SimulationTask {
   id: number;
-  job_id: string;
-  type: TaskType;
+  type: string;
   title: string;
-  full_title: string;
-  duration: string;
-  time_range: string;
   description: string;
-  will_learn: string[];
-  will_do: string[];
   expectations: TaskExpectation[];
   evaluation_criteria: EvaluationCriterion[];
-  content: Record<string, any>;
+  starterCode?: string;
+  instructions?: string;
+  questions?: CodeTaskQuestion[];
 }
+
+import type { CodeTaskQuestion } from "./CodeTask";
