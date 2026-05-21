@@ -61,6 +61,19 @@ export default function TaskSimulationPage() {
             generatedContent={generatedContent!}
           />
         );
+      case "review_comments":
+      case "review_document":
+      case "ux_problem":
+      case "stakeholder_notes":
+        return (
+          <PMTask
+            taskType={task.type as PMTaskType}
+            jobId={jobId!}
+            taskDbId={taskDbId!}
+            simulationId={simulationId!} onSubmit={function (answers: Record<number, string>): void {
+              throw new Error("Function not implemented.");
+            } }          />
+        );
     }
   };
 
