@@ -10,6 +10,11 @@ from ai.task.software_engineering.code_review import CodeReviewTask
 from ai.task.software_engineering.requirements import RequirementsTask
 from ai.task.software_engineering.performance import PerformanceTask
 from ai.task.data_science.clean_data import CleanDataTask
+from ai.task.product_manager.review_comments import ReviewCommentsTask
+from ai.task.product_manager.review_document import ReviewDocumentTask
+from ai.task.product_manager.ux_problem import UXProblemTask
+from ai.task.product_manager.stakeholder_notes import StakeholderNotesTask
+
 
 evaluation_service = EvaluationService()
 
@@ -23,6 +28,12 @@ tasks = {
     },
     "data-scientist": {
         "clean_data": CleanDataTask()
+    },
+    "product-manager": {
+        "review_comments": ReviewCommentsTask(),
+        "review_document": ReviewDocumentTask(),
+        "ux_problem":        UXProblemTask(),
+        "stakeholder_notes": StakeholderNotesTask(),
     }
 }
 
