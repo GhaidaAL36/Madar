@@ -34,6 +34,18 @@ def create_app():
         from .routes.jobs import jobs_bp
         app.register_blueprint(jobs_bp, url_prefix="/api/jobs")
 
+        from .routes.tasks import tasks_bp
+        app.register_blueprint(tasks_bp, url_prefix="/api/jobs")
+
+        from .routes.simulation import simulation_bp
+        app.register_blueprint(simulation_bp, url_prefix="/api/jobs")
+
+        from .routes.submission import submission_bp
+        app.register_blueprint(submission_bp, url_prefix="/api/jobs")
+
+        from .routes.review import review_bp
+        app.register_blueprint(review_bp, url_prefix="/api/jobs") 
+
         from .routes.admin import admin_bp
         app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
