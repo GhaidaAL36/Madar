@@ -22,16 +22,19 @@ export const taskService = {
   },
 
   getPMTask: async (jobId: string, taskId: string): Promise<PMTaskData> => {
-    const { data } = await api.get(`/jobs/${jobId}/tasks/${taskId}`);
+    const { data } = await api.get(`/jobs/${jobId}/tasks/${taskId}/pm`);
+    console.log(">>> getPMTask data:", data);
     return {
-      taskType: data.type,
-      instructions: data.description,
-      hints: data.will_learn ?? [],
-      documentTitle: data.full_title,
-      sections: data.content?.sections ?? [],
-      comments: data.content?.comments ?? [],
-      uxDescription: data.content?.ux_description ?? "",
-      uxUserJourney: data.content?.ux_user_journey ?? [],
+      taskType: data.taskType,
+      instructions: data.instructions,
+      hints: data.hints ?? [],
+      documentTitle: data.documentTitle,
+      sections: data.sections ?? [],
+      comments: data.comments ?? [],
+      uxDescription: data.uxDescription ?? "",
+      uxUserJourney: data.uxUserJourney ?? [],
+      questions: data.questions ?? [],
+      context: data.context ?? "",
     };
   },
 

@@ -8,19 +8,17 @@ interface UsePMTaskResult {
   error: string | null;
 }
 
-export function usePMTask(jobId: string, taskId: string, taskType: PMTaskType): UsePMTaskResult {
-  const [pmTask, setPmTask]   = useState<PMTaskData | null>(null);
+export function usePMTask(jobId: string, taskDbId: string, taskType: PMTaskType) {
+  const [pmTask, setPmTask] = useState<PMTaskData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!jobId || !taskId) return;
-    taskService
-      .getPMTask(jobId, taskId)
-      .then(setPmTask)
+    if (!jobId || !taskDbId) return;
+    taskService.getPMTask(jobId, taskDbId).then(setPmTask)
       .catch(() => setError("فشل تحميل بيانات المهمة"))
       .finally(() => setLoading(false));
-  }, [jobId, taskId, taskType]);
+  }, [jobId, taskDbId]);
 
   return { pmTask, loading, error };
 }
