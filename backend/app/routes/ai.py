@@ -35,15 +35,15 @@ def get_task():
             type=task_id,
             title=result.get("task_title", ""),
             full_title=result.get("task_title", ""),
-            duration=result.get("estimated_time", ""),
-            time_range=result.get("estimated_time", ""),
-            description=result.get("task_description", ""),
+            duration=result.get("estimated_time", "20-25 دقيقة"),   
+            time_range=result.get("estimated_time", "20-25 دقيقة"),
+            description=result.get("instructions") or result.get("context", ""), 
             will_learn=[],
             will_do=[],
             expectations=[],
             evaluation_criteria=[],
-            content=result,
-        )
+            content=result,  
+            )
         db.session.add(task)
         db.session.commit()
 
