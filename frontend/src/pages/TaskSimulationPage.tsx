@@ -67,7 +67,7 @@ export default function TaskSimulationPage() {
   return (
     <>
       <div className="flex flex-col h-screen bg-bg-dark">
-        <TaskNavbar  />
+        <TaskNavbar />
         <div className="flex flex-1 overflow-hidden">
           <TaskDetails task={task} />
           {renderTaskArea()}

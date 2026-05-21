@@ -8,19 +8,19 @@ interface UseDataTaskResult {
   error: string | null;
 }
 
-export function useDataTask(jobId: string, aiTaskId: string): UseDataTaskResult {
+export function useDataTask(jobId: string, taskId: string): UseDataTaskResult {
   const [dataTask, setDataTask] = useState<DataTaskData | null>(null);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState<string | null>(null);
 
   useEffect(() => {
-    if (!jobId || !aiTaskId) return;
+    if (!jobId || !taskId) return;
     taskService
-      .generateDataTask(jobId, aiTaskId)
+      .getDataTask(jobId, taskId)
       .then(setDataTask)
       .catch(() => setError("فشل تحميل بيانات المهمة"))
       .finally(() => setLoading(false));
-  }, [jobId, aiTaskId]);
+  }, [jobId, taskId]);
 
   return { dataTask, loading, error };
 }
