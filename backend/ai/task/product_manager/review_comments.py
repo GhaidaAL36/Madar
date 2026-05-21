@@ -8,93 +8,79 @@ class ReviewCommentsTask:
         self.model = "llama-3.3-70b-versatile"
         self.task_name = "مراجعة تعليقات المستخدمين"
         self.duration = "20-25 دقيقة"
+        self.questions = [
+            {"id": 1, "question": "ما هي أكثر المشاكل تكراراً في التعليقات؟"},
+            {"id": 2, "question": "رتّب المشاكل حسب الأولوية وبرر اختيارك"},
+            {"id": 3, "question": "ما هي خطة العمل المقترحة لمعالجة هذه المشاكل؟"}
+        ]
 
-    def explainConcept(self, job_explanation: str) -> dict:
-        prompt = f"""
-You are preparing a student for a User Comments Review task in Product Management.
-The student already read this explanation about the job:
-{job_explanation}
+    def generateTask(self) -> dict:
+        prompt = """
+You are creating a user comments review task for a Product Manager student in Arabic.
 
-All text must be in Arabic except programming terms like Bug, UX, PRD, etc.
-
-Respond ONLY in valid JSON, no extra text:
-{{
-  "concept_title": "مراجعة تعليقات المستخدمين User Comments Review",
-  "concept_explanation": "شرح بسيط بالعربي لما هي مراجعة تعليقات المستخدمين، 3-4 جمل، بناءً على ما قرأه الطالب",
-  "real_world_example": "مثال حقيقي بالعربي لكيف يستخدم مدير المنتج تعليقات المستخدمين لاتخاذ قرارات",
-  "what_will_be_tested": "أخبر الطالب بالعربي بالضبط ماذا سيفعل في هذه المهمة"
-}}
-"""
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            max_tokens=800
-        )
-        content = response.choices[0].message.content.strip()
-        content = content.replace("```json", "").replace("```", "").strip()
-        return json.loads(content)
-
-    def generateTask(self, concept: dict, job_explanation: str) -> dict:
-        prompt = f"""
-You are creating a beginner user comments review task for a Product Manager student.
-The student read this job explanation:
-{job_explanation}
-
-And just learned this concept:
-{json.dumps(concept, indent=2, ensure_ascii=False)}
+Generate a realistic app with user comments that the student must analyze.
 
 IMPORTANT RULES:
-- All text must be in Arabic except terms like Bug, UX, Feature, etc.
-- Give the student 5 realistic user comments about an app
-- Each comment must have a category: bug, feature, ux, or performance
-- The questions must be directly based on the comments
-- A student who only read the explanation should be able to answer all questions
-- The correct answer must be obvious from reading the comments
-- The wrong choices must be clearly wrong
-- The choices must always have A. B. C. D. labels
+- All text must be in Arabic except terms like bug, feature, ux, performance
+- Generate a context describing the app and company in 4-5 sentences
+- Generate exactly 8 user comments
+- Each comment must have: id, author (Arabic name), content, category (bug/feature/ux/performance), date
+- Make sure there are patterns — at least 2 comments about the same issue
+- keyFindings must describe the main patterns and priorities found in the comments
+- keyFindings are hidden from the user and only used for evaluation
+- STRICTLY use Arabic only in all text fields
+- No Russian, no Chinese, no Thai, no Vietnamese, no English words except: bug, feature, ux, performance
+- Comment content must be 100% in Arabic except the category terms
+- Author names must be proper Arabic names only
+- Never mix any foreign language characters in any field
+- Author names must be FULL Arabic names written in Arabic script only, never in English letters
+- Example correct: "هند عبدالعزيز", "عبدالله محمد"
+- Example wrong:  "hend abdulaziz", "abdullah mohammed"
+- Comments must sound like real natural user feedback, not formulaic sentences
+- Never end a comment with "في feature X" or "في bug X" or "في ux X"
+- The category is only in the category field, never mentioned inside the comment content
+- ZERO tolerance for any non-Arabic non-English characters anywhere
+- Before finalizing, check every single character in every field — if any non-Arabic non-English character exists, replace the entire comment with a clean Arabic one
 
+
+
+
+- Author names must be chosen from this list only: هند عبدالعزيز, عبدالله محمد, فاطمة علي, محمد خالد, سارة أحمد, نادر عبدالرحمن, ريم عمر, أحمد علي, نور الهدى, خالد سعيد, أميرة حسن, سلمى فهد
 Respond ONLY in valid JSON, no extra text:
-{{
+{
   "task_title": "مراجعة تعليقات المستخدمين",
-  "task_description": "وصف قصير بالعربي لما سيفعله الطالب",
-  "estimated_time": "20-25 دقيقة",
-  "instructions": "تعليمات بسيطة بالعربي",
-  "comments": [
-    {{"id": "1", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "bug", "date": "2024-01-15"}},
-    {{"id": "2", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "feature", "date": "2024-01-15"}},
-    {{"id": "3", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "ux", "date": "2024-01-14"}},
-    {{"id": "4", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "performance", "date": "2024-01-14"}},
-    {{"id": "5", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "bug", "date": "2024-01-13"}}
+  "context": "سياق مفصل عن التطبيق والشركة",
+  "instructions": "راجع التعليقات التالية من مستخدمي التطبيق. حدّد الأنماط الرئيسية، رتّب المشاكل حسب الأولوية، واكتب خطة عمل مقترحة.",
+  "hints": [
+    "ابحث عن المشاكل المتكررة في أكثر من تعليق",
+    "ركّز على التعليقات ذات تصنيف bug أولاً",
+    "فكّر في التأثير على تجربة المستخدم وليس فقط التقنية"
   ],
-  "questions": [
-    {{
-      "id": 1,
-      "question": "ما هي المشكلة الأكثر تكراراً في التعليقات؟",
-      "choices": ["A. خيار أول", "B. خيار ثاني", "C. خيار ثالث", "D. خيار رابع"],
-      "correct_answer": "A"
-    }},
-    {{
-      "id": 2,
-      "question": "ما هي التعليقات التي يجب معالجتها أولاً؟",
-      "choices": ["A. تعليقات الـ Bug", "B. تعليقات الـ Feature", "C. تعليقات الـ UX", "D. تعليقات الـ Performance"],
-      "correct_answer": "A"
-    }},
-    {{
-      "id": 3,
-      "question": "سؤال بالعربي مباشرة عن التعليقات",
-      "choices": ["A. خيار أول", "B. خيار ثاني", "C. خيار ثالث", "D. خيار رابع"],
-      "correct_answer": "B"
-    }}
+  "comments": [
+    {"id": "1", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "bug", "date": "2024-01-15"},
+    {"id": "2", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "feature", "date": "2024-01-15"},
+    {"id": "3", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "ux", "date": "2024-01-14"},
+    {"id": "4", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "performance", "date": "2024-01-14"},
+    {"id": "5", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "bug", "date": "2024-01-14"},
+    {"id": "6", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "feature", "date": "2024-01-13"},
+    {"id": "7", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "ux", "date": "2024-01-13"},
+    {"id": "8", "author": "اسم عربي", "content": "تعليق المستخدم", "category": "feature", "date": "2024-01-12"}
+  ],
+  "keyFindings": [
+    "الأنماط الرئيسية في التعليقات",
+    "الأولويات المقترحة بناءً على التعليقات",
+    "خطة العمل المثالية"
   ]
-}}
+}
 """
         response = self.client.chat.completions.create(
             model=self.model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
-            max_tokens=1500
+            max_tokens=2000
         )
         content = response.choices[0].message.content.strip()
         content = content.replace("```json", "").replace("```", "").strip()
-        return json.loads(content)
+        result = json.loads(content)
+        result["questions"] = self.questions
+        return result
