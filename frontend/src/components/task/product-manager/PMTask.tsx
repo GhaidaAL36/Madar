@@ -7,7 +7,7 @@ import DocumentView from "./pmViews/DocumentView";
 import UXProblemView from "./pmViews/UXProblemView";
 import StakeholderView from "./pmViews/StakeholderView";
 import PMAnswerPanel from "./PMAnswerPanel";
-
+import HintsPanel from "../HintsPanel";
 
 const LABELS: Record<PMTaskType, { badge: string; color: string }> = {
   "review-comments": {
@@ -79,6 +79,7 @@ export default function PMTask({ taskType, onSubmit }: Props) {
 
       <PMAnswerPanel value={answer} onChange={setAnswer} />
 
+      <HintsPanel hints={pmTask.hints} />
     </div>
   );
 }

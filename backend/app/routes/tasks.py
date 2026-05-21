@@ -1,9 +1,11 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
 from ..models import Task
+from ..extensions import db
 
 tasks_bp = Blueprint("tasks", __name__)
 
-@tasks_bp.route("/jobs/<job_id>/tasks", methods=["GET"])
+@tasks_bp.route("/<job_id>/tasks", methods=["GET"])
 def get_tasks(job_id):
     tasks = Task.query.filter_by(job_id=job_id).all()
     if not tasks:
@@ -17,14 +19,14 @@ def get_tasks(job_id):
         "duration": task.duration,
         "time_range": task.time_range,
         "description": task.description,
-        "will_learn": task.will_learn,
-        "will_do": task.will_do,
-        "expectations": task.expectations,
-        "evaluation_criteria": task.evaluation_criteria,
+        "will_learn": task.will_learn or [],
+        "will_do": task.will_do or [],
+        "expectations": task.expectations or [],
+        "evaluation_criteria": task.evaluation_criteria or [],
         "content": task.content
     } for task in tasks]), 200
 
-@tasks_bp.route("/jobs/<job_id>/tasks/<int:task_id>", methods=["GET"])
+@tasks_bp.route("/<job_id>/tasks/<int:task_id>", methods=["GET"])
 def get_task(job_id, task_id):
     task = Task.query.filter_by(id=task_id, job_id=job_id).first()
     if not task:
@@ -44,4 +46,41 @@ def get_task(job_id, task_id):
         "evaluation_criteria": task.evaluation_criteria,
         "content": task.content
     }), 200
-    
+
+@tasks_bp.route("/<job_id>/tasks/<int:task_id>/data", methods=["GET"])
+def get_data_task(job_id, task_id):
+    task = Task.query.filter_by(id=task_id, job_id=job_id).first()
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+
+    content = task.content or {}
+
+    return jsonify({
+        "instructions": content.get("instructions") or content.get("context", ""),
+        "chartType":    content.get("chartType", "bar"),       
+        "columns":      content.get("columns", []),
+        "rows":         content.get("rows", []),
+        "chartData":    content.get("chartData", []),          
+        "stats":        content.get("stats", []),
+        "keyFindings":  content.get("keyFindings", []),        
+        "hints":        task.will_learn or [],
+        "questions":    content.get("questions", []),          
+    }), 200
+
+@tasks_bp.route("/<job_id>/tasks/<int:task_id>/code", methods=["GET"])
+def get_code_task(job_id, task_id):
+    task = Task.query.filter_by(id=task_id, job_id=job_id).first_or_404()
+
+    if task.type not in ("write-code", "fix-code", "clean-code"):
+        return jsonify({"error": "هذه المهمة ليست مهمة كود"}), 400
+
+    content = task.content or {}
+
+    return jsonify({
+        "taskType":       task.type,
+        "language":       content.get("language", "python"),
+        "instructions":   task.description,
+        "starterCode":    content.get("starter_code", ""),
+        "hints":          content.get("hints", []),
+        "expectedOutput": content.get("expected_output", ""),
+    }), 200
