@@ -1,8 +1,8 @@
 export type PMTaskType =
-  | "review-comments"
-  | "review-document"
-  | "ux-problem"
-  | "stakeholder-notes";
+  | "review_comments"
+  | "review_document"
+  | "ux_problem"
+  | "stakeholder_notes";
 
 export interface UserComment {
   id: string;
@@ -25,4 +25,6 @@ export interface PMTaskData {
   sections?: DocumentSection[];
   uxDescription?: string;
   uxUserJourney?: string[];
+  questions?: { id: number; question: string }[];
+  context?: string;
 }
