@@ -3,13 +3,25 @@ from datetime import datetime
 from ..models import Job, Task, Simulation, Submission, Review
 from ..extensions import db
 from ai.ai_engine import evaluateResponse
+from ai.evaluation import EvaluationService
 
 submission_bp = Blueprint("submission", __name__)
+evaluation_service = EvaluationService()
 
-
-@submission_bp.route("/<job_id>/tasks/<int:task_id>/simulations/<simulation_id>/submit", methods=["POST"])
+@submission_bp.route("/<job_id>/tasks/<task_id>/simulations/<simulation_id>/submit", methods=["POST"])
 def submit_simulation(job_id, task_id, simulation_id):
-    simulation = Simulation.query.filter_by(id=simulation_id, task_id=task_id).first()
+    try:
+        task_id_int = int(task_id)
+    except ValueError:
+        task_id_int = None
+
+    task = Task.query.filter_by(id=task_id_int, job_id=job_id).first() if task_id_int else None
+    if not task:
+        task = Task.query.filter_by(ai_task_id=task_id, job_id=job_id).first()
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+
+    simulation = Simulation.query.filter_by(id=simulation_id, task_id=task.id).first()
     if not simulation:
         return jsonify({"error": "Simulation not found"}), 404
 
@@ -17,15 +29,18 @@ def submit_simulation(job_id, task_id, simulation_id):
         return jsonify({"error": "Already submitted"}), 400
 
     data = request.get_json(silent=True) or {}
-    questions = data.get("questions", [])
+    questions    = data.get("questions", [])
     user_answers = data.get("user_answers", {})
 
-    result = evaluateResponse(questions, user_answers)
+    if task.type in ("clean_data", "build_model"):
+        result = evaluation_service.evaluateOpenResponse(task.content, user_answers)
+    else:
+        result = evaluateResponse(questions, user_answers)
 
     submission = Submission(
         simulation_id=simulation_id,
-        task_id=task_id,
-        answer_type="mcq",
+        task_id=task.id,
+        answer_type="open" if task.type in ("clean_data", "build_model") else "mcq",
         analysis=str(user_answers),
     )
     simulation.status = "completed"
@@ -35,14 +50,14 @@ def submit_simulation(job_id, task_id, simulation_id):
 
     review = Review(
         submission_id=submission.id,
-        score=result["score"],
-        fit_percent=result["score"],
-        fit_summary=result["feedback"],
+        score=result.get("score", 0),
+        fit_percent=result.get("score", 0),
+        fit_summary=result.get("performance_label", "") + " — " + result.get("feedback", ""),
         strengths=[],
         improvements=[],
-        detailed_feedback=[result["feedback"]],
+        detailed_feedback=[result.get("feedback", "")],
         skills_json=[],
-        answer_review_json=result["answer_review"],
+        answer_review_json=result.get("answer_review", []),
     )
     db.session.add(review)
     db.session.commit()
