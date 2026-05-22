@@ -21,10 +21,10 @@ npm install
 
 ### 3. Set up environment variables
 
-Copy the env file and fill in
+create env file and fill in
 
 ```bash
-cp .env
+VITE_API_URL
 ```
 
 ### 4. Start the development server
