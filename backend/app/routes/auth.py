@@ -16,8 +16,15 @@ def signup():
     try:
         data = SignupSchema().load(raw)
     except ValidationError as e:
-        return bad_request(str(e.messages))
-
+        fields = e.messages
+        if "email" in fields:
+            return bad_request("البريد الإلكتروني غير صالح")
+        if "password" in fields:
+            return bad_request("كلمة المرور قصيرة جداً")
+        if "name" in fields:
+            return bad_request("الاسم مطلوب")
+        return bad_request("بيانات غير صالحة")
+    
     if User.query.filter_by(email=data["email"]).first():
         return bad_request("البريد الإلكتروني مستخدم بالفعل")
 
@@ -63,6 +70,8 @@ def login():
 
     if not user or not bcrypt.check_password_hash(user.password_hash, data["password"]):
         return unauthorized("البريد الإلكتروني أو كلمة المرور غير صحيحة")
+    if user.status == "blocked":
+        return unauthorized("هذا الحساب محظور ")
 
     token = create_access_token(identity=user.id)
 
