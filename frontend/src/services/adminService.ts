@@ -8,9 +8,13 @@ export const adminService = {
     return data;
   },
 
-  toggleUserStatus: async (id: number): Promise<AdminUser> => {
+  toggleUserStatus: async (id: string): Promise<{ message: string; status: string }> => {
     const { data } = await api.patch(`/admin/users/${id}/toggle-status`);
     return data;
+  },
+
+  deleteUser: async (id: string): Promise<void> => {
+    await api.delete(`/admin/users/${id}`);
   },
 
   deleteJob: async (id: string): Promise<void> => {

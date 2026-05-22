@@ -3,6 +3,13 @@ import { authService, type LoginPayload, type SignupPayload } from "../services/
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 
+const extractError = (err: unknown, fallback: string): string => {
+  const data = (err as any)?.response?.data;
+  return typeof data?.error === "string"
+    ? data.error
+    : data?.error?.message ?? fallback;
+};
+
 export function useAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +29,7 @@ export function useAuth() {
         const destination = role === "admin" ? "/admin" : "/profile";
         navigate(destination);
       })
-      .catch(() => setError("البريد الإلكتروني أو كلمة المرور غير صحيحة"))
+      .catch((err) => setError(extractError(err, "حدث خطأ، حاول مرة أخرى")))
       .finally(() => setLoading(false));
   };
 
@@ -35,7 +42,7 @@ export function useAuth() {
         setUser(data.user);
         navigate("/profile");
       })
-      .catch(() => setError("فشل إنشاء الحساب، حاول مرة أخرى"))
+      .catch((err) => setError(extractError(err, "حدث خطأ، حاول مرة أخرى")))
       .finally(() => setLoading(false));
   };
 

@@ -1,15 +1,21 @@
 import { useAdminUsers } from "../../hooks/useAdminUsersApi";
 
 const LABELS = {
-  heading:   "المستخدمون",
-  active:    "نشط",
-  blocked:   "محظور",
-  block:     "حظر",
-  unblock:   "إلغاء الحظر",
+  heading: "المستخدمون",
+  active: "نشط",
+  blocked: "محظور",
+  block: "حظر",
+  unblock: "إلغاء الحظر",
+  loading: "جاري التحميل...",
+  empty: "لا يوجد مستخدمون",
 } as const;
 
 function AdminUsersSection() {
-  const { users, toggleStatus } = useAdminUsers();
+  const { users, loading, error, toggleStatus, deleteUser } = useAdminUsers();
+
+  if (loading) return <p className="text-center py-10 text-text-muted">{LABELS.loading}</p>;
+  if (error) return <p className="text-center py-10 text-red-400">{error}</p>;
+  if (!users.length) return <p className="text-center py-10 text-text-muted">{LABELS.empty}</p>;
 
   return (
     <>
@@ -32,24 +38,33 @@ function AdminUsersSection() {
 
             <div className="text-text-muted text-[13px]">{u.email}</div>
 
-            <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
-              u.status === "active"
-                ? "bg-green-50 text-green-600"
-                : "bg-red-50 text-red-400"
-            }`}>
+            <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${u.status === "active"
+              ? "bg-green-50 text-green-600"
+              : "bg-red-50 text-red-400"
+              }`}>
               {u.status === "active" ? LABELS.active : LABELS.blocked}
             </span>
 
-            <button
-              onClick={() => toggleStatus(u.id)}
-              className={`text-[12px] font-bold px-3 py-1.5 rounded-sm transition-colors cursor-pointer border-0 bg-transparent ${
-                u.status === "active"
-                  ? "text-red-400 hover:text-red-500"
-                  : "text-teal hover:text-teal/80"
-              }`}
-            >
-              {u.status === "active" ? LABELS.block : LABELS.unblock}
-            </button>
+            {u.role !== "admin" && (
+              <button
+                onClick={() => toggleStatus(u.id)}
+                className={`text-[12px] font-bold px-3 py-1.5 rounded-sm transition-colors cursor-pointer border-0 bg-transparent ${u.status === "active"
+                    ? "text-red-400 hover:text-red-500"
+                    : "text-teal hover:text-teal/80"
+                  }`}
+              >
+                {u.status === "active" ? LABELS.block : LABELS.unblock}
+              </button>
+            )}
+
+            {u.role !== "admin" && (
+              <button
+                onClick={() => deleteUser(u.id)}
+                className="text-[12px] font-bold px-3 py-1.5 rounded-sm transition-colors cursor-pointer border-0 bg-transparent text-red-500 hover:text-red-600"
+              >
+                حذف
+              </button>
+            )}
           </div>
         ))}
       </div>

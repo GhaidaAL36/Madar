@@ -6,7 +6,8 @@ interface UseAdminUsersResult {
   users: AdminUser[];
   loading: boolean;
   error: string | null;
-  toggleStatus: (id: number) => void;
+  toggleStatus: (id: string) => void;
+  deleteUser: (id: string) => void;
 }
 
 export function useAdminUsers(): UseAdminUsersResult {
@@ -22,11 +23,27 @@ export function useAdminUsers(): UseAdminUsersResult {
       .finally(() => setLoading(false));
   }, []);
 
-  const toggleStatus = (id: number) => {
-    adminService.toggleUserStatus(id).then((updated) => {
-      setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)));
-    });
+  const toggleStatus = (id: string) => {
+    adminService
+      .toggleUserStatus(id)
+      .then(({ status }) => {
+        setUsers((prev) =>
+          prev.map((u) =>
+            u.id === id ? { ...u, status: status as AdminUser["status"] } : u
+          )
+        );
+      })
+      .catch(() => setError("فشل تحديث الحالة"));
   };
 
-  return { users, loading, error, toggleStatus };
+  const deleteUser = (id: string) => {
+    adminService
+      .deleteUser(id)
+      .then(() => {
+        setUsers((prev) => prev.filter((u) => u.id !== id));
+      })
+      .catch(() => setError("فشل حذف المستخدم"));
+  };
+
+  return { users, loading, error, toggleStatus, deleteUser };
 }
