@@ -70,19 +70,16 @@ def get_data_task(job_id, task_id):
 @tasks_bp.route("/<job_id>/tasks/<int:task_id>/code", methods=["GET"])
 def get_code_task(job_id, task_id):
     task = Task.query.filter_by(id=task_id, job_id=job_id).first_or_404()
-
-    if task.type not in ("write-code", "fix-code", "clean-code"):
-        return jsonify({"error": "هذه المهمة ليست مهمة كود"}), 400
-
     content = task.content or {}
 
     return jsonify({
-        "taskType":       task.type,
-        "language":       content.get("language", "python"),
-        "instructions":   task.description,
-        "starterCode":    content.get("starter_code", ""),
-        "hints":          content.get("hints", []),
-        "expectedOutput": content.get("expected_output", ""),
+        "taskType":           task.type,
+        "language":           content.get("language", "python"),
+        "instructions":       content.get("instructions", task.description),
+        "starterCode":        content.get("starter_code", ""),
+        "expectedOutput":     content.get("expected_output", ""),
+        "hints":              content.get("hints", []),
+        "evaluationCriteria": content.get("evaluation_criteria", ""),
     }), 200
 
 @tasks_bp.route("/<job_id>/tasks/<int:task_id>/pm", methods=["GET"])
