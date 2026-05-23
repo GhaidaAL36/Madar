@@ -64,7 +64,7 @@ def get_data_task(job_id, task_id):
         "stats":        content.get("stats", []),
         "keyFindings":  content.get("keyFindings", []),        
         "hints":        task.will_learn or [],
-        "questions":    content.get("questions", []),          
+        "questions": [],          
     }), 200
 
 @tasks_bp.route("/<job_id>/tasks/<int:task_id>/code", methods=["GET"])
