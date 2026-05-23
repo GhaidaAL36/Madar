@@ -13,6 +13,7 @@
     "@fortawesome/fontawesome-free": "^7.2.0",
     "@monaco-editor/react": "^4.7.0",
     "axios": "^1.15.2",
+    "pyodide": "^0.29.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2",
