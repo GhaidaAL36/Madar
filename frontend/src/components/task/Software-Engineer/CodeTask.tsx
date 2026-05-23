@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react";
 import type { CodeTaskType } from "@/types/CodeTask";
 import { useCodeTask } from "@/hooks/useCodeTaskApi";
 import HintsPanel from "../HintsPanel";
 import OutputPanel from "./OutputPanel";
-import { executeCode, getOutput, getError, isSuccess } from "@/services/pistonService";
-import type { SupportedLanguage } from "@/types/Piston";
+import type { SupportedLanguage } from "@/services/codeExecutorService";
 
 const LABELS = {
   run: "تشغيل",
   running: "جارٍ التشغيل...",
   submit: "إرسال",
-  filename: "solution.py",
   typeBadge: {
     "write-code": "كتابة كود",
     "fix-code": "تصحيح كود",
@@ -27,47 +24,39 @@ const LABELS = {
 
 interface Props {
   taskType: CodeTaskType;
+  taskDbId: number;
+  jobId: string;
   onSubmit: () => void;
 }
 
-export default function CodeTask({ taskType, onSubmit }: Props) {
-  const { jobId, taskId } = useParams<{ jobId: string; taskId: string }>();
-
-  const { codeTask, loading, error } = useCodeTask(
-    jobId ?? "",
-    taskId ?? "",
-    taskType
-  );
+export default function CodeTask({ taskType, taskDbId, jobId, onSubmit }: Props) {
+  const { codeTask, loading, error } = useCodeTask(jobId, String(taskDbId), taskType);
 
   const [code, setCode] = useState("");
   const [output, setOutput] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
+  const [pyodideReady, setPyodideReady] = useState(false);
+
 
   useEffect(() => {
-    if (codeTask) {
-      setCode(codeTask.starterCode);
-      setOutput(null);
+    if (codeTask?.language === "python") {
+      import("@/services/codeExecutorService")
+        .then(m => m.executeCode("python", "print('ready')"))
+        .then(() => setPyodideReady(true))
+        .catch(() => setPyodideReady(true));
+    } else {
+      setPyodideReady(true);
     }
-  }, [codeTask, taskType]);
-
+  }, [codeTask?.language]);
   const handleRun = async () => {
-    if (!jobId || !taskId || !codeTask) return;
+    if (!codeTask) return;
     setRunning(true);
     setOutput(null);
-
     try {
-      const result = await executeCode(
-        codeTask.language as SupportedLanguage,
-        code
-      );
-
-      if (isSuccess(result)) {
-        setOutput(getOutput(result));
-      } else {
-        setOutput(getError(result));
-      }
+      const result = await executeCode(codeTask.language, code);
+      setOutput(result.stdout || result.stderr || "لا يوجد مخرجات");
     } catch (err) {
-      setOutput(err instanceof Error ? err.message : "حدث خطأ أثناء التشغيل");
+      setOutput(err instanceof Error ? err.message : "حدث خطأ");
     } finally {
       setRunning(false);
     }
@@ -87,27 +76,22 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
 
   return (
     <div className="flex flex-col flex-1 h-full bg-bg-dark overflow-hidden">
-      <div className="flex items-start gap-4 px-5 py-4 border-b border-white/8 shrink-0">
-        <span
-          className={`text-[11px] font-bold px-2.5 py-1 rounded-full border shrink-0 mt-0.5 ${LABELS.typeBadgeColor[taskType]}`}
-        >
-          {LABELS.typeBadge[taskType]}
-        </span>
-      </div>
 
       <div className="flex flex-1 overflow-hidden">
+
+        {/* Left: editor */}
         <div className="flex flex-col flex-1 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2 bg-bg-dark border-b border-white/8 shrink-0">
             <span className="text-[11px] text-text-muted font-mono">
-              {LABELS.filename}
+              {codeTask.language === "python" ? "solution.py" : "solution.js"}
             </span>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleRun}
-                disabled={running}
+                disabled={running || !pyodideReady}
                 className="flex items-center gap-1.5 bg-gold-dark hover:bg-gold/80 disabled:opacity-50 text-white text-[12px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer border-0 disabled:cursor-not-allowed"
               >
-                {running ? LABELS.running : LABELS.run}
+                {!pyodideReady ? "جارٍ التهيئة..." : running ? LABELS.running : LABELS.run}
               </button>
               <button
                 onClick={onSubmit}
@@ -141,7 +125,21 @@ export default function CodeTask({ taskType, onSubmit }: Props) {
           </div>
         </div>
 
-        <OutputPanel output={output} running={running} />
+        {/* Right: instructions + expected output + output */}
+        <div className="flex flex-col w-80 shrink-0 border-l border-white/8 overflow-hidden">
+
+
+          <div dir="ltr" className="px-4 py-3 border-b border-white/8 shrink-0">
+            <p className="text-[11px] font-bold text-text-muted mb-2" dir="rtl">
+              المخرجات المتوقعة
+            </p>
+            <pre className="text-[11px] text-green-400 font-mono leading-relaxed whitespace-pre-wrap">
+              {codeTask.expectedOutput}
+            </pre>
+          </div>
+
+          <OutputPanel output={output} running={running} />
+        </div>
       </div>
 
       <HintsPanel hints={codeTask.hints} />

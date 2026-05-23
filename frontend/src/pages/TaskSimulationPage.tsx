@@ -17,9 +17,17 @@ export default function TaskSimulationPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [answer, setAnswer] = useState("");
 
-  const handleSubmitRequest = (answer: string) => {
-    setAnswer(answer);
-    setShowConfirm(true);
+  const handleCodeSubmit = async () => {
+    if (!jobId || !taskDbId || !simulationId) return;
+    try {
+      await taskService.submitSimulation(jobId, String(taskDbId), simulationId, {
+        questions: [],
+        user_answers: { code: "submitted" },
+      });
+      navigate(`/jobs/${jobId}/tasks/${taskDbId}/review?sim=${simulationId}&task=${taskDbId}`);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   if (loading) return (
@@ -38,6 +46,14 @@ export default function TaskSimulationPage() {
     switch (task.type) {
       case "debug_code":
       case "write_function":
+        return (
+          <CodeTask
+            taskType="write-code"
+            taskDbId={taskDbId!}
+            jobId={jobId!}
+            onSubmit={handleCodeSubmit}
+          />
+        );
       case "code_review":
       case "performance":
         return (
