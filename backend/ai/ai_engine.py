@@ -9,7 +9,8 @@ from ai.task.software_engineering.write_function import WriteFunctionTask
 from ai.task.software_engineering.code_review import CodeReviewTask
 from ai.task.software_engineering.requirements import RequirementsTask
 from ai.task.software_engineering.performance import PerformanceTask
-from ai.task.data_science.clean_data import CleanDataTask
+from ai.task.data_science.clean_data import DataCleanTask
+from ai.task.data_science.data_analyst import DataAnalystTask
 from ai.task.product_manager.review_comments import ReviewCommentsTask
 from ai.task.product_manager.review_document import ReviewDocumentTask
 # from ai.task.product_manager.ux_problem import UXProblemTask
@@ -27,7 +28,8 @@ tasks = {
         "performance": PerformanceTask()
     },
     "data-scientist": {
-        "clean_data": CleanDataTask()
+        "clean_data": DataCleanTask(),
+        "data_analyst": DataAnalystTask()
     },
     "product-manager": {
         "review_comments": ReviewCommentsTask(),

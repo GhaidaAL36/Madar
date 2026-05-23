@@ -45,7 +45,8 @@ job = {
 
 """,
         "tasks": [
-            {"id": "clean_data", "title": "تنظيف البيانات", "duration": "20-25 دقيقة"}
+            {"id": "clean_data", "title": "تنظيف البيانات", "duration": "20-25 دقيقة"},
+            {"id": "data_analyst", "title": "تحليل البيانات", "duration": "20-25 دقيقة"},
         ]
     },
     "product-manager": {
