@@ -1,13 +1,10 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReview } from "../hooks/useReviewApi";
-import { getScoreMeta } from "../utils/reviewUtils";
 import ScoreRing from "../components/review/ScoreRing";
 import SectionCard from "../components/review/SectionCard";
 
 const LABELS = {
-  evaluated: "✓ تم التقييم",
   results: "نتائج",
-  feedbackTitle: "تغذية راجعة",
   answersTitle: "مراجعة إجاباتك",
   fitLabel: "توافقك مع مهنة",
   fitBased: "بناءً على هذه المهمة:",
@@ -66,21 +63,17 @@ function ReviewPage() {
         {/* Hero */}
         <div className="flex items-start justify-between gap-6">
           <div className="flex flex-col gap-1">
-            <span className="text-[11px] font-bold tracking-widest uppercase bg-teal/10 text-teal border border-teal/20 rounded-full px-3 py-0.5 w-fit mb-1">
-              {LABELS.evaluated}
-            </span>
             <h1 className="text-[32px] font-bold text-bg-dark-secondary leading-tight">
               {LABELS.results} {taskTitle}
             </h1>
             <p className="text-[14px] text-text-muted mt-1">
-              {jobTitleAr} · {taskTitle} · {taskDuration}
+              {jobTitleAr} · {taskTitle} 
             </p>
           </div>
           <ScoreRing score={review.score} />
         </div>
 
-        {/* Feedback */}
-        <SectionCard title={LABELS.feedbackTitle} icon="💬">
+        <SectionCard >
           <div className="flex flex-col gap-3">
             {review.detailedFeedback.map((para, i) => (
               <p key={i} className="text-[14px] text-text-muted leading-[1.8] bg-bg-light rounded-md px-5 py-4">
@@ -90,8 +83,7 @@ function ReviewPage() {
           </div>
         </SectionCard>
 
-        {/* Answer Review */}
-        <SectionCard title={`${LABELS.answersTitle} (${correctCount}/${total})`} icon="🔍">
+        <SectionCard >
           <div className="flex flex-col gap-3">
             {review.answerReview.map((item) => (
               <div
@@ -120,7 +112,6 @@ function ReviewPage() {
           </div>
         </SectionCard>
 
-        {/* Fit footer */}
         <div className="bg-bg-dark rounded-[20px] px-8 py-7 flex flex-col gap-4">
           <div className="text-[11px] font-bold text-text-on-dark/50 tracking-widest uppercase">
             {LABELS.fitLabel} {jobTitleAr}

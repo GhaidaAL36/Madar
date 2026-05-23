@@ -18,6 +18,7 @@ export const taskService = {
 
   getDataTask: async (jobId: string, taskId: string): Promise<DataTaskData> => {
     const { data } = await api.get(`/jobs/${jobId}/tasks/${taskId}/data`);
+    console.log("raw /data response:", data);
     return data;
   },
 
@@ -58,12 +59,10 @@ export const taskService = {
     return data;
   },
 
-  submitSimulation: async (
-    jobId: string,
-    taskId: string,
-    simulationId: string,
-    payload: { questions: any[]; user_answers: Record<number, string> }
-  ) => {
+  submitSimulation: async (jobId: string, taskId: string, simulationId: string, payload: {
+    questions: any[];
+    user_answers: any;
+  }) => {
     const { data } = await api.post(
       `/jobs/${jobId}/tasks/${taskId}/simulations/${simulationId}/submit`,
       payload

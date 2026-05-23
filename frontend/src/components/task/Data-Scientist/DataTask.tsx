@@ -5,16 +5,19 @@ import { taskService } from "@/services/taskService";
 import TableTab from "./dataTabs/TableTab";
 import ChartTab from "./dataTabs/ChartTab";
 import StatsTab from "./dataTabs/StatsTab";
-import AnswerPanel from "../AnswerPanel";
 import HintsPanel from "../HintsPanel";
-import "@/style/scrollbar.css"
+import DataAnswerPanel from "./DataAnswerPanel";
+import AnalysisAnswerPanel from "./AnalysisAnswerPanel";
+import type { DataReport } from "@/types/DataTask";
+import type { AnalysisReport } from "./AnalysisAnswerPanel";
+import "@/style/scrollbar.css";
 
 type TabKey = "table" | "chart" | "stats";
 
 const TABS: { key: TabKey; label: string; icon: string }[] = [
-  { key: "table", label: "الجدول", icon: "fa-table" },
+  { key: "table", label: "الجدول",        icon: "fa-table"      },
   { key: "chart", label: "الرسم البياني", icon: "fa-chart-line" },
-  { key: "stats", label: "الإحصاء", icon: "fa-chart-bar" },
+  { key: "stats", label: "الإحصاء",       icon: "fa-chart-bar"  },
 ];
 
 interface Props {
@@ -22,21 +25,36 @@ interface Props {
   taskDbId: number;
   simulationId: string;
   generatedContent: any;
+  taskType: "clean_data" | "data_analyst";
 }
 
-export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
+export default function DataTask({ jobId, taskDbId, simulationId, taskType }: Props) {
   const navigate = useNavigate();
   const { dataTask, loading, error } = useDataTask(jobId, String(taskDbId));
   const [activeTab, setActiveTab] = useState<TabKey>("table");
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (answers: Record<number, string>) => {
-    if (!dataTask) return;
+  const handleSubmitClean = async (report: DataReport) => {
     setSubmitting(true);
     try {
       await taskService.submitSimulation(jobId, String(taskDbId), simulationId, {
-        questions: dataTask.questions,
-        user_answers: answers,
+        questions: [],
+        user_answers: { problems: report.problems, conclusion: report.conclusion },
+      });
+      navigate(`/jobs/${jobId}/tasks/${taskDbId}/review?sim=${simulationId}&task=${taskDbId}`);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSubmitAnalysis = async (report: AnalysisReport) => {
+    setSubmitting(true);
+    try {
+      await taskService.submitSimulation(jobId, String(taskDbId), simulationId, {
+        questions: [],
+        user_answers: { insights: report.insights, conclusion: report.conclusion },
       });
       navigate(`/jobs/${jobId}/tasks/${taskDbId}/review?sim=${simulationId}&task=${taskDbId}`);
     } catch (e) {
@@ -61,13 +79,10 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
   return (
     <div className="flex flex-1 h-full bg-bg-dark overflow-hidden custom-scrollbar">
 
+      {/* Left — data */}
       <div className="flex flex-col flex-1 min-w-0 border-l border-white/8">
-        <div dir="rtl" className="flex items-center gap-3 px-5 py-3 border-b border-white/8 shrink-0">
-          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full border bg-teal/15 text-teal border-teal/25">
-            تحليل بيانات
-          </span>
-        </div>
 
+        {/* Tab bar */}
         <div dir="rtl" className="flex items-center gap-1 px-4 py-2 border-b border-white/8 shrink-0">
           {TABS.map((tab) => {
             const isActive = tab.key === activeTab;
@@ -75,10 +90,11 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[12px] font-bold transition-all cursor-pointer border-0 ${isActive
-                  ? "bg-white/10 text-text-on-dark"
-                  : "bg-transparent text-text-muted hover:text-text-on-dark"
-                  }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-[12px] font-bold transition-all cursor-pointer border-0 ${
+                  isActive
+                    ? "bg-white/10 text-text-on-dark"
+                    : "bg-transparent text-text-muted hover:text-text-on-dark"
+                }`}
               >
                 <i className={`fa-solid ${tab.icon} text-[11px]`} />
                 {tab.label}
@@ -87,19 +103,31 @@ export default function DataTask({ jobId, taskDbId, simulationId }: Props) {
           })}
         </div>
 
+        {/* Tab content */}
         <div className="flex-1 overflow-auto min-h-0">
           {activeTab === "table" && <TableTab columns={dataTask.columns} rows={dataTask.rows} />}
           {activeTab === "chart" && <ChartTab chartType={dataTask.chartType} chartData={dataTask.chartData} />}
           {activeTab === "stats" && <StatsTab stats={dataTask.stats} />}
         </div>
+
+        <HintsPanel hints={dataTask.keyFindings} />
       </div>
 
+      {/* Right — answer panel */}
       <div className="flex flex-col w-96 shrink-0 h-full overflow-hidden border-r border-white/8">
-        <AnswerPanel
-          questions={dataTask.questions ?? []}
-          onSubmit={handleSubmit}
-          submitting={submitting}
-        />
+        {taskType === "clean_data" ? (
+          <DataAnswerPanel
+            columns={dataTask.columns}
+            rows={dataTask.rows}
+            onSubmit={handleSubmitClean}
+            submitting={submitting}
+          />
+        ) : (
+          <AnalysisAnswerPanel
+            onSubmit={handleSubmitAnalysis}
+            submitting={submitting}
+          />
+        )}
       </div>
 
     </div>

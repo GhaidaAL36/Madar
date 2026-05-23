@@ -52,15 +52,10 @@ export default function TaskSimulationPage() {
           />
         );
       case "clean_data":
-      case "build_model":
-        return (
-          <DataTask
-            jobId={jobId!}
-            taskDbId={taskDbId!}
-            simulationId={simulationId!}
-            generatedContent={generatedContent!}
-          />
-        );
+        return <DataTask jobId={jobId!} taskDbId={taskDbId!} simulationId={simulationId!} generatedContent={generatedContent!} taskType="clean_data" />;
+
+      case "data_analyst":
+        return <DataTask jobId={jobId!} taskDbId={taskDbId!} simulationId={simulationId!} generatedContent={generatedContent!} taskType="data_analyst" />;
       case "review_comments":
       case "review_document":
       case "ux_problem":
@@ -72,7 +67,7 @@ export default function TaskSimulationPage() {
             taskDbId={taskDbId!}
             simulationId={simulationId!} onSubmit={function (answers: Record<number, string>): void {
               throw new Error("Function not implemented.");
-            } }          />
+            }} />
         );
     }
   };

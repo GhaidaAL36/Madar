@@ -10,14 +10,17 @@ interface UseDataTaskResult {
 
 export function useDataTask(jobId: string, taskId: string): UseDataTaskResult {
   const [dataTask, setDataTask] = useState<DataTaskData | null>(null);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!jobId || !taskId) return;
     taskService
       .getDataTask(jobId, taskId)
-      .then(setDataTask)
+      .then((d) => {
+        console.log("dataTask response:", JSON.stringify(d, null, 2));
+        setDataTask(d);
+      })
       .catch(() => setError("فشل تحميل بيانات المهمة"))
       .finally(() => setLoading(false));
   }, [jobId, taskId]);
