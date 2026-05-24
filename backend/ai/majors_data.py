@@ -27,8 +27,6 @@ job = {
             {"id": "debug_code", "title": "تصحيح الكود", "duration": "15-20 دقيقة"},
             {"id": "write_function", "title": "كتابة دالة", "duration": "20-25 دقيقة"},
             {"id": "code_review", "title": "مراجعة الكود", "duration": "25-30 دقيقة"},
-            {"id": "requirements", "title": "تحليل المتطلبات", "duration": "30-35 دقيقة"},
-            {"id": "performance", "title": "تحسين الأداء", "duration": "35-40 دقيقة"}
         ]
     },
     "data-scientist": {

@@ -7,8 +7,6 @@ from ai.evaluation import EvaluationService
 from ai.task.software_engineering.debug_code import DebugCodeTask
 from ai.task.software_engineering.write_function import WriteFunctionTask
 from ai.task.software_engineering.code_review import CodeReviewTask
-from ai.task.software_engineering.requirements import RequirementsTask
-from ai.task.software_engineering.performance import PerformanceTask
 from ai.task.data_science.clean_data import DataCleanTask
 from ai.task.data_science.data_analyst import DataAnalystTask
 from ai.task.product_manager.review_comments import ReviewCommentsTask
@@ -24,8 +22,6 @@ tasks = {
         "debug_code": DebugCodeTask(),
         "write_function": WriteFunctionTask(),
         "code_review": CodeReviewTask(),
-        "requirements": RequirementsTask(),
-        "performance": PerformanceTask()
     },
     "data-scientist": {
         "clean_data": DataCleanTask(),
