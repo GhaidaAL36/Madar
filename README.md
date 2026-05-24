@@ -34,7 +34,7 @@ Madar is a full-stack web application that lets users practice tasks for three c
 | Backend | Python, Flask |
 | AI | Groq API |
 | Database | SQLserver |
-| Piston API |
+| AI  | ONE COMPILER API
 
 ---
 
