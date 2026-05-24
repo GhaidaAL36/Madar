@@ -38,6 +38,13 @@ def submit_simulation(job_id, task_id, simulation_id):
         result = evaluation_service.evaluateAnalysisReport(task.content, user_answers)
     elif task.type in ("review_comments", "review_document", "ux_problem", "stakeholder_notes"):
         result = evaluation_service.evaluateOpenResponse(task.content, user_answers)
+    elif task.type == "write_function":
+        result = evaluation_service.evaluateWriteFunction(task.content, user_answers)
+        result = evaluation_service.evaluatePerformanceAnalysis(task.content, user_answers)
+    elif task.type == "debug_code":
+        result = evaluation_service.evaluateDebugCode(task.content, user_answers)
+    elif task.type == "code_review":
+        result = evaluation_service.evaluateCodeReview(task.content, user_answers)
     else:
         result = evaluateResponse(questions, user_answers)
 

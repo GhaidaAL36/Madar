@@ -25,6 +25,9 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+        from .routes.code_runner import code_runner_bp
+        app.register_blueprint(code_runner_bp, url_prefix="/api")
+
         from .routes.auth import auth_bp
         app.register_blueprint(auth_bp, url_prefix="/api/auth")
 
@@ -51,6 +54,8 @@ def create_app():
 
         from .routes.ai import ai_bp
         app.register_blueprint(ai_bp, url_prefix="/api/ai")
+
+        
 
         @app.route("/")
         def home():

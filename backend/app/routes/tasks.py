@@ -77,9 +77,15 @@ def get_code_task(job_id, task_id):
         "language":           content.get("language", "python"),
         "instructions":       content.get("instructions", task.description),
         "starterCode":        content.get("starter_code", ""),
+        "buggyCode":          content.get("buggy_code", ""),
         "expectedOutput":     content.get("expected_output", ""),
+        "failingTestCases":   content.get("failing_test_cases", ""),
         "hints":              content.get("hints", []),
         "evaluationCriteria": content.get("evaluation_criteria", ""),
+        "codeToReview":       content.get("code_to_review", ""),
+        "reviewChecklist":    content.get("review_checklist", []),
+        "reviewFocusLabel":   content.get("review_focus_label", ""),
+        "expectedIssues":     content.get("expected_issues", []),
     }), 200
 
 @tasks_bp.route("/<job_id>/tasks/<int:task_id>/pm", methods=["GET"])
