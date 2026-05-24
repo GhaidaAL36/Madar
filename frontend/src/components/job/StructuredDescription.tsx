@@ -8,13 +8,40 @@ interface Section {
 const toArabicNumeral = (n: number) =>
   n.toString().replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[+d]);
 
+/**
+ * Splits plain Arabic prose into bullet-like lines.
+ * Sentences ending with . ؟ ! are each treated as one line.
+ * Any sentence that contains "مثال" or starts with an example-like
+ * pattern is converted to a "مثال:" line so the renderer picks it up.
+ */
+const proseToBulletLines = (prose: string): string[] => {
+  // Split on Arabic/Latin sentence terminators while keeping the delimiter
+  const raw = prose
+    .split(/(?<=[.؟!])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  return raw.map((sentence) => {
+    // If the sentence already has a "مثال" marker, normalise it
+    if (/^مثال[:\s]/.test(sentence)) {
+      return sentence.startsWith("مثال:") ? sentence : sentence.replace(/^مثال\s*/, "مثال: ");
+    }
+    // Heuristic: sentence contains the word مثال mid-way → treat as example
+    if (/مثال/.test(sentence) && !sentence.startsWith("-")) {
+      return `مثال: ${sentence}`;
+    }
+    // Regular bullet
+    return `- ${sentence}`;
+  });
+};
+
 const parseStructuredText = (text: string): Section[] => {
   const sections: Section[] = [];
   const chunks = text.split(/(?=^\d+\.\s)/m).filter(Boolean);
 
   for (const chunk of chunks) {
-    const lines = chunk.split("\n").map((l) => l.trim()).filter(Boolean);
-    const headerMatch = lines[0]?.match(/^(\d+)\.\s+(.+)$/);
+    const rawLines = chunk.split("\n").map((l) => l.trim()).filter(Boolean);
+    const headerMatch = rawLines[0]?.match(/^(\d+)\.\s+(.+)$/);
     if (!headerMatch) continue;
 
     const number = parseInt(headerMatch[1], 10);
@@ -24,7 +51,22 @@ const parseStructuredText = (text: string): Section[] => {
     const titleAr = enMatch ? enMatch[1].trim() : rawTitle;
     const titleEn = enMatch ? enMatch[2].trim() : undefined;
 
-    sections.push({ number, titleAr, titleEn, lines: lines.slice(1) });
+    const bodyLines = rawLines.slice(1);
+
+    // Detect whether content is already structured (has "- " or "مثال:" lines)
+    const isStructured = bodyLines.some(
+      (l) => l.startsWith("- ") || l.startsWith("مثال:")
+    );
+
+    let finalLines: string[];
+    if (isStructured) {
+      finalLines = bodyLines;
+    } else {
+      // Join everything back and re-split as prose sentences
+      finalLines = proseToBulletLines(bodyLines.join(" "));
+    }
+
+    sections.push({ number, titleAr, titleEn, lines: finalLines });
   }
   return sections;
 };
@@ -32,10 +74,47 @@ const parseStructuredText = (text: string): Section[] => {
 const StructuredDescription = ({ text }: { text: string }) => {
   const sections = parseStructuredText(text);
   if (!sections.length) {
+    // No numbered sections at all — render as auto-bulleted prose
+    const lines = proseToBulletLines(text);
     return (
-      <p className="text-text-on-dark text-sm leading-relaxed text-right max-w-140">
-        {text}
-      </p>
+      <div className="flex flex-col gap-1.5 max-w-140">
+        {lines.map((line, i) => {
+          if (line.startsWith("- ")) {
+            return (
+              <div key={i} className="flex items-start gap-2 flex-row-reverse">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal shrink-0 mt-1.5" />
+                <p className="text-xs text-text-muted leading-relaxed text-right">
+                  {line.slice(2)}
+                </p>
+              </div>
+            );
+          }
+          if (line.startsWith("مثال:")) {
+            return (
+              <div
+                key={i}
+                className="bg-teal/5 border-r-2 border-teal pr-2.5 pl-2 py-2 rounded-r-none rounded-l-md"
+              >
+                <p
+                  dir="rtl"
+                  className="text-xs text-teal/80 leading-relaxed text-right"
+                  dangerouslySetInnerHTML={{
+                    __html: line.replace(
+                      /`([^`]+)`/g,
+                      '<code class="bg-teal/20 px-1 py-0.5 rounded text-[11px] font-mono text-teal">$1</code>'
+                    ),
+                  }}
+                />
+              </div>
+            );
+          }
+          return (
+            <p key={i} className="text-xs text-text-on-dark/70 leading-relaxed text-right">
+              {line}
+            </p>
+          );
+        })}
+      </div>
     );
   }
 

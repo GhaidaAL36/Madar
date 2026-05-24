@@ -1,10 +1,11 @@
+// CodeTask.tsx
 import { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import type { CodeTaskType } from "@/types/CodeTask";
 import { useCodeTask } from "@/hooks/useCodeTaskApi";
 import HintsPanel from "../HintsPanel";
 import OutputPanel from "./OutputPanel";
-import type { SupportedLanguage } from "@/services/codeExecutorService";
+import { executeCode, LANGUAGE_CONFIG, type SupportedLanguage } from "@/services/codeExecutorService";
 
 const LABELS = {
   run: "تشغيل",
@@ -12,21 +13,16 @@ const LABELS = {
   submit: "إرسال",
   typeBadge: {
     "write-code": "كتابة كود",
-    "fix-code": "تصحيح كود",
-    "clean-code": "تنظيف كود",
+    "debug-code": "تصحيح كود",
+    "code-review": "تنظيف كود",
   } as Record<CodeTaskType, string>,
-  typeBadgeColor: {
-    "write-code": "bg-teal/15 text-teal border-teal/25",
-    "fix-code": "bg-red-500/10 text-red-400 border-red-400/25",
-    "clean-code": "bg-accent/15 text-accent border-accent/25",
-  },
 } as const;
 
 interface Props {
   taskType: CodeTaskType;
   taskDbId: number;
   jobId: string;
-  onSubmit: () => void;
+  onSubmit: (code: string) => void;
 }
 
 export default function CodeTask({ taskType, taskDbId, jobId, onSubmit }: Props) {
@@ -35,26 +31,26 @@ export default function CodeTask({ taskType, taskDbId, jobId, onSubmit }: Props)
   const [code, setCode] = useState("");
   const [output, setOutput] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
-  const [pyodideReady, setPyodideReady] = useState(false);
 
-
+  // Initialize editor with starter code once task loads
   useEffect(() => {
-    if (codeTask?.language === "python") {
-      import("@/services/codeExecutorService")
-        .then(m => m.executeCode("python", "print('ready')"))
-        .then(() => setPyodideReady(true))
-        .catch(() => setPyodideReady(true));
-    } else {
-      setPyodideReady(true);
-    }
-  }, [codeTask?.language]);
+    if (!codeTask) return;
+    const initialCode =
+      codeTask.buggyCode ??
+      codeTask.starterCode ??
+      LANGUAGE_CONFIG[codeTask.language as SupportedLanguage]?.starterCode ??
+      "";
+    setCode(initialCode);
+  }, [codeTask]);
+
   const handleRun = async () => {
     if (!codeTask) return;
     setRunning(true);
     setOutput(null);
     try {
-      const result = await executeCode(codeTask.language, code);
-      setOutput(result.stdout || result.stderr || "لا يوجد مخرجات");
+      const result = await executeCode(codeTask.language as SupportedLanguage, code);
+      const out = result.stdout || result.stderr || result.exception;
+      setOutput(out || "لا يوجد مخرجات");
     } catch (err) {
       setOutput(err instanceof Error ? err.message : "حدث خطأ");
     } finally {
@@ -76,7 +72,6 @@ export default function CodeTask({ taskType, taskDbId, jobId, onSubmit }: Props)
 
   return (
     <div className="flex flex-col flex-1 h-full bg-bg-dark overflow-hidden">
-
       <div className="flex flex-1 overflow-hidden">
 
         {/* Left: editor */}
@@ -88,16 +83,16 @@ export default function CodeTask({ taskType, taskDbId, jobId, onSubmit }: Props)
             <div className="flex items-center gap-2">
               <button
                 onClick={handleRun}
-                disabled={running || !pyodideReady}
+                disabled={running}
                 className="flex items-center gap-1.5 bg-gold-dark hover:bg-gold/80 disabled:opacity-50 text-white text-[12px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer border-0 disabled:cursor-not-allowed"
               >
-                {!pyodideReady ? "جارٍ التهيئة..." : running ? LABELS.running : LABELS.run}
+                {running ? LABELS.running : LABELS.run}
               </button>
               <button
-                onClick={onSubmit}
-                className="flex items-center gap-1.5 bg-accent hover:bg-accent-hover text-bg-dark text-[12px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer border-0"
+                onClick={() => onSubmit(code)}
+                className="flex items-center gap-1.5 bg-teal hover:bg-teal-light text-white text-[12px] font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer border-0"
               >
-                {LABELS.submit}
+                إرسال
               </button>
             </div>
           </div>
@@ -125,18 +120,20 @@ export default function CodeTask({ taskType, taskDbId, jobId, onSubmit }: Props)
           </div>
         </div>
 
-        {/* Right: instructions + expected output + output */}
         <div className="flex flex-col w-80 shrink-0 border-l border-white/8 overflow-hidden">
 
 
-          <div dir="ltr" className="px-4 py-3 border-b border-white/8 shrink-0">
-            <p className="text-[11px] font-bold text-text-muted mb-2" dir="rtl">
-              المخرجات المتوقعة
-            </p>
-            <pre className="text-[11px] text-green-400 font-mono leading-relaxed whitespace-pre-wrap">
-              {codeTask.expectedOutput}
-            </pre>
-          </div>
+          {/* For write_function: show expected output */}
+          {codeTask.taskType === "write_function" && codeTask.expectedOutput && (
+            <div dir="ltr" className="px-4 py-3 border-b border-white/8 shrink-0">
+              <p className="text-[11px] font-bold text-text-muted mb-2" dir="rtl">
+                المخرجات المتوقعة
+              </p>
+              <pre className="text-[11px] text-green-400 font-mono leading-relaxed whitespace-pre-wrap">
+                {codeTask.expectedOutput}
+              </pre>
+            </div>
+          )}
 
           <OutputPanel output={output} running={running} />
         </div>

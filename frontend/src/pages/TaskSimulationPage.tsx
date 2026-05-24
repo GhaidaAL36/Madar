@@ -7,6 +7,8 @@ import type { PMTaskType } from "../types/PMTask";
 import TaskNavbar from "../components/task/TaskNavbar";
 import TaskDetails from "../components/task/TaskDetails";
 import CodeTask from "../components/task/Software-Engineer/CodeTask";
+import CodeReviewTask from "../components/task/Software-Engineer/CodeReviewTask";
+import type { CodeReviewReport } from "../components/task/Software-Engineer/CodeReviewTask";
 import DataTask from "../components/task/Data-Scientist/DataTask";
 import PMTask from "../components/task/product-manager/PMTask";
 
@@ -17,12 +19,25 @@ export default function TaskSimulationPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [answer, setAnswer] = useState("");
 
-  const handleCodeSubmit = async () => {
+  const handleCodeSubmit = async (code: string) => {
     if (!jobId || !taskDbId || !simulationId) return;
     try {
       await taskService.submitSimulation(jobId, String(taskDbId), simulationId, {
         questions: [],
-        user_answers: { code: "submitted" },
+        user_answers: { code },
+      });
+      navigate(`/jobs/${jobId}/tasks/${taskDbId}/review?sim=${simulationId}&task=${taskDbId}`);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleCodeReviewSubmit = async (report: CodeReviewReport) => {
+    if (!jobId || !taskDbId || !simulationId) return;
+    try {
+      await taskService.submitSimulation(jobId, String(taskDbId), simulationId, {
+        questions: [],
+        user_answers: { issues: report.issues, summary: report.summary },
       });
       navigate(`/jobs/${jobId}/tasks/${taskDbId}/review?sim=${simulationId}&task=${taskDbId}`);
     } catch (e) {
@@ -44,7 +59,6 @@ export default function TaskSimulationPage() {
 
   const renderTaskArea = () => {
     switch (task.type) {
-      case "debug_code":
       case "write_function":
         return (
           <CodeTask
@@ -54,17 +68,24 @@ export default function TaskSimulationPage() {
             onSubmit={handleCodeSubmit}
           />
         );
-      case "code_review":
-      case "performance":
+
+      case "debug_code":
         return (
           <CodeTask
+            taskType="debug-code"
+            taskDbId={taskDbId!}
+            jobId={jobId!}
+            onSubmit={handleCodeSubmit}
+          />
+        );
+
+      case "code_review":
+        return (
+          <CodeReviewTask
             jobId={jobId!}
             taskDbId={taskDbId!}
             simulationId={simulationId!}
-            starterCode={task.starterCode ?? ""}
-            instructions={task.instructions ?? ""}
-            questions={task.questions ?? []}
-            onSubmit={handleSubmitRequest}
+            onSubmit={handleCodeReviewSubmit}
           />
         );
       case "clean_data":
