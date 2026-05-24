@@ -25,6 +25,7 @@ create env file and fill in
 
 ```bash
 VITE_API_URL
+VITE_ONECOMPILER_KEY
 ```
 
 ### 4. Start the development server

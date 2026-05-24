@@ -23,6 +23,7 @@ create env file and fill in
 DATABASE_URL
 JWT_SECRET_KEY
 GROQ_API_KEY
+ONECOMPILER_KEY
 ```
 
 ### 4. Start the development server
