@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 from datetime import datetime
 from ..models import Job, Task, Simulation
 from ..extensions import db
@@ -8,12 +9,20 @@ simulation_bp = Blueprint("simulation", __name__)
 
 @simulation_bp.route("/<job_id>/tasks/<int:task_id>/simulations", methods=["POST"])
 def create_simulation(job_id, task_id):
+    user_id = None
+    try:
+        verify_jwt_in_request(optional=True)
+        user_id = get_jwt_identity()
+    except Exception:
+        pass
+
     task = Task.query.filter_by(id=task_id, job_id=job_id).first()
     if not task:
         return jsonify({"error": "Task not found"}), 404
 
     simulation = Simulation(
         task_id=task_id,
+        user_id=user_id,   # None for anonymous
         status="in_progress",
         started_at=datetime.utcnow(),
     )

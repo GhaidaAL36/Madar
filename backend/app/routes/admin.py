@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.middleware.admin_guard import require_admin
-from app.models import User, Job
+from app.models import User, Job, Simulation, Task, Review, Submission
 from app.extensions import db
 
 admin_bp = Blueprint('admin', __name__)
@@ -95,3 +95,45 @@ def add_job():
     db.session.add(job)
     db.session.commit()
     return jsonify({"message": "Job created", "id": job.id}), 201
+
+@admin_bp.route('/simulations', methods=['GET'])
+@require_admin
+def get_all_simulations():
+    simulations = (
+        Simulation.query
+        .order_by(Simulation.started_at.desc())
+        .all()
+    )
+
+    result = []
+    for sim in simulations:
+        task = Task.query.get(sim.task_id)
+        job = Job.query.get(task.job_id) if task else None
+        submission = Submission.query.filter_by(simulation_id=sim.id).first()
+        review = Review.query.filter_by(submission_id=submission.id).first() if submission else None
+
+        # get user info if simulation is linked to a user
+        user = None
+        if sim.user_id:
+            user = User.query.get(sim.user_id)
+
+        result.append({
+            "simulationId":  sim.id,
+            "status":        sim.status,
+            "startedAt":     sim.started_at.isoformat(),
+            "completedAt":   sim.completed_at.isoformat() if sim.completed_at else None,
+            "jobId":         job.id if job else None,
+            "jobTitleAr":    job.title_ar if job else "",
+            "taskTitle":     task.title if task else "",
+            "taskType":      task.type if task else "",
+            "taskDbId":      task.id if task else None,
+            "score":         review.score if review else None,
+            "fitPercent":    review.fit_percent if review else None,
+            "user": {
+                "id":    user.id,
+                "name":  user.name,
+                "email": user.email,
+            } if user else None,   # None = anonymous simulation
+        })
+
+    return jsonify(result), 200

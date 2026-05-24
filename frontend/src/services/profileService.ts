@@ -1,5 +1,5 @@
 import api from "./api";
-import type { Profile } from "../types/profile";
+import type { Profile, SimulationHistory } from "../types/profile";
 
 export const profileService = {
   getProfile: async (): Promise<Profile> => {
@@ -9,5 +9,10 @@ export const profileService = {
 
   updateInterests: async (interests: string[]): Promise<void> => {
     await api.patch("/profile/interests", { interests });
+  },
+
+  getHistory: async (): Promise<SimulationHistory[]> => {
+    const { data } = await api.get("/profile/history");
+    return data;
   },
 };

@@ -1,13 +1,18 @@
-export interface Simulation {
-  icon: string;
-  job: string;
-  match: number;
-}
-
 export interface Profile {
   userId: string;
   name: string;
   email: string;
   interests: string[];
-  simulations: Simulation[];
+}
+
+export interface SimulationHistory {
+  simulationId: string;
+  completedAt: string;
+  jobId: string;
+  jobTitleAr: string;
+  taskTitle: string;
+  taskType: string;
+  taskDbId: number;
+  score: number | null;
+  fitPercent: number | null;
 }

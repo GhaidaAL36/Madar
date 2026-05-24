@@ -17,3 +17,5 @@ class Simulation(db.Model):
     submission = db.relationship(
         "Submission", backref="simulation", uselist=False, lazy=True
     )
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)

@@ -6,6 +6,8 @@ import AdminJobsSection from "../components/admin/AdminJobsSection";
 import AdminUsersSection from "../components/admin/AdminUsersSection";
 import { useAdminUsers } from "../hooks/useAdminUsersApi";
 import { useJobs } from "@/hooks/useJobsApi";
+import AdminSimulationsSection from "../components/admin/AdminSimulationsSection";
+
 
 function AdminPage() {
   const [section, setSection] = useState<AdminSection>("dashboard");
@@ -23,7 +25,8 @@ function AdminPage() {
             jobCount={jobs.length}
           />
         )}
-        {section === "jobs"  && <AdminJobsSection jobs={jobs} />}
+        {section === "jobs" && <AdminJobsSection jobs={jobs} />}
+        {section === "simulations" && <AdminSimulationsSection />}
         {section === "users" && <AdminUsersSection />}
       </div>
     </div>

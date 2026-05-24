@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import type { AdminSection } from "../../types/admin";
 
 const NAV_ITEMS: { key: AdminSection; label: string }[] = [
-  { key: "dashboard", label: "لوحة التحكم" },
-  { key: "jobs",      label: "المهن"        },
-  { key: "users",     label: "المستخدمون"   },
+  { key: "dashboard",   label: "لوحة التحكم" },
+  { key: "jobs",        label: "المجالات"        },
+  { key: "simulations", label: "المحاكاة"     },
+  { key: "users",       label: "المستخدمون"   },
 ];
 
 interface Props {

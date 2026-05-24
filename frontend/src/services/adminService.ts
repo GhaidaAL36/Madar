@@ -1,6 +1,6 @@
 import api from "./api";
-import type { AdminUser } from "../types/admin";
-import type { Job } from "@/types/Job";
+import type { AdminUser, AdminSimulation } from "../types/admin";  
+import type { Job } from "../types/Job";                        
 
 export const adminService = {
   getUsers: async (): Promise<AdminUser[]> => {
@@ -23,6 +23,11 @@ export const adminService = {
 
   updateJobSkills: async (id: string, skills: string[]): Promise<Job> => {
     const { data } = await api.patch(`/admin/jobs/${id}/skills`, { skills });
+    return data;
+  },
+
+  getSimulations: async (): Promise<AdminSimulation[]> => {
+    const { data } = await api.get("/admin/simulations");
     return data;
   },
 };

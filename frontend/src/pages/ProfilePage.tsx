@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useProfile } from "../hooks/useProfileApi";
+import { useProfile, useProfileHistory } from "../hooks/useProfileApi";
 import { profileService } from "../services/profileService";
-import type { Simulation } from "../types/profile";
+import type { SimulationHistory } from "../types/profile";
 import { AVAILABLE_INTERESTS } from "../store/interests";
 
 const LABELS = {
@@ -11,52 +12,103 @@ const LABELS = {
   interests: "الاهتمامات",
   addInterest: "+ إضافة",
   simulationHistory: "سجل المحاكاة",
+  viewReview: "عرض التقييم",
+  noHistory: "لم تُكمل أي محاكاة بعد",
 } as const;
 
-const getMatchColor = (match: number): string => {
-  if (match >= 75) return "var(--color-teal)";
-  if (match >= 55) return "var(--color-gold)";
+const getScoreColor = (score: number): string => {
+  if (score >= 75) return "var(--color-teal)";
+  if (score >= 55) return "var(--color-gold)";
   return "var(--color-text-muted)";
 };
 
-const SimulationCard = ({ sim }: { sim: Simulation }) => {
-  const color = getMatchColor(sim.match);
+const TASK_TYPE_LABELS: Record<string, string> = {
+  write_function:     "كتابة كود",
+  debug_code:         "تصحيح كود",
+  code_review:        "مراجعة كود",
+  analyze_data:       "تحليل بيانات",
+  clean_data:         "تنظيف بيانات",
+  review_comments:    "مراجعة تعليقات",
+  review_document:    "مراجعة وثيقة",
+  ux_problem:         "مشكلة UX",
+  stakeholder_notes:  "اجتماع أصحاب المصلحة",
+};
+
+const SimulationCard = ({ item }: { item: SimulationHistory }) => {
+  const score = item.fitPercent ?? item.score ?? 0;
+  const color = getScoreColor(score);
+  const completedDate = new Date(item.completedAt).toLocaleDateString("ar-SA", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
   return (
     <div className="flex items-center justify-between bg-bg-card-secondary rounded-[16px] px-5 py-4 transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_10px_30px_rgba(46,125,140,0.12)]">
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-[10px] bg-teal/10 flex items-center justify-center text-[20px]">
-          {sim.icon}
-        </div>
-        <span className="text-[15px] font-bold text-bg-dark-secondary">
-          {sim.job}
+      <div className="flex items-center gap-4 min-w-0">
+        {/* Task type badge */}
+        <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-teal/10 text-teal border border-teal/20">
+          {TASK_TYPE_LABELS[item.taskType] ?? item.taskType}
         </span>
+
+        {/* Titles */}
+        <div className="min-w-0">
+          <div className="text-[15px] font-bold text-bg-dark-secondary truncate">
+            {item.jobTitleAr}
+          </div>
+          <div className="text-[12px] text-text-muted truncate">
+            {item.taskTitle}
+          </div>
+        </div>
       </div>
-      <div className="flex items-center gap-3">
-        <div className="w-28 h-2 bg-bg-card rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-500"
-            style={{ width: `${sim.match}%`, background: color }}
-          />
-        </div>
-        <span className="text-[14px] font-bold w-10 text-left" style={{ color }}>
-          {sim.match}%
+
+      <div className="flex items-center gap-4 shrink-0">
+        {/* Date */}
+        <span className="text-[12px] text-text-muted hidden sm:block">
+          {completedDate}
         </span>
+
+        {/* Score bar */}
+        {score > 0 && (
+          <div className="flex items-center gap-2">
+            <div className="w-24 h-2 bg-bg-card rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${score}%`, background: color }}
+              />
+            </div>
+            <span
+              className="text-[13px] font-bold w-9 text-left"
+              style={{ color }}
+            >
+              {score}%
+            </span>
+          </div>
+        )}
+
+        {/* Review link */}
+        <Link
+          to={`/jobs/${item.jobId}/tasks/${item.taskDbId}/review?sim=${item.simulationId}`}
+          className="text-[12px] font-bold text-teal hover:underline shrink-0"
+        >
+          {LABELS.viewReview}
+        </Link>
       </div>
     </div>
   );
 };
 
 function ProfilePage() {
-  const { user, profileInterests, simulations, loading, error } = useProfile();
+  const { user, profileInterests, loading, error } = useProfile();
+  const { history, loading: historyLoading } = useProfileHistory();
+
   const [interests, setInterests] = useState<string[]>([]);
   const [showPicker, setShowPicker] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!loading) {
-      setInterests(profileInterests);
-    }
-  }, [loading]);
+    if (!loading) setInterests(profileInterests);
+  }, [loading, profileInterests]);
 
   const available = AVAILABLE_INTERESTS.filter((i) => !interests.includes(i));
 
@@ -74,8 +126,16 @@ function ProfilePage() {
     await profileService.updateInterests(updated);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-text-muted">جارٍ التحميل...</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center text-text-muted">
+      جارٍ التحميل...
+    </div>
+  );
+  if (error) return (
+    <div className="min-h-screen flex items-center justify-center text-red-500">
+      {error}
+    </div>
+  );
 
   return (
     <>
@@ -151,11 +211,22 @@ function ProfilePage() {
             <div className="text-[13px] font-bold text-bg-dark-secondary mb-6 uppercase tracking-[0.08em]">
               {LABELS.simulationHistory}
             </div>
-            <div className="flex flex-col gap-4">
-              {simulations.map((sim) => (
-                <SimulationCard key={sim.job} sim={sim} />
-              ))}
-            </div>
+
+            {historyLoading ? (
+              <div className="text-sm text-text-muted text-center py-6">
+                جارٍ التحميل...
+              </div>
+            ) : history.length === 0 ? (
+              <div className="text-sm text-text-muted text-center py-6">
+                {LABELS.noHistory}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {history.map((item) => (
+                  <SimulationCard key={item.simulationId} item={item} />
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
