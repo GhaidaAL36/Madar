@@ -85,14 +85,6 @@ const SimulationCard = ({ item }: { item: SimulationHistory }) => {
             </span>
           </div>
         )}
-
-        {/* Review link */}
-        <Link
-          to={`/jobs/${item.jobId}/tasks/${item.taskDbId}/review?sim=${item.simulationId}`}
-          className="text-[12px] font-bold text-teal hover:underline shrink-0"
-        >
-          {LABELS.viewReview}
-        </Link>
       </div>
     </div>
   );

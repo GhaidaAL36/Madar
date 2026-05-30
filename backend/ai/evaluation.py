@@ -165,10 +165,14 @@ STUDENT SUBMISSION:
 
 EVALUATION RULES:
 - Score 0-100
-- Test the logic mentally against the expected output examples
+- Check that the code language matches what the task expects
+- Test the logic mentally against each expected output example
 - Partial credit for partially correct logic
+- Deduct points if wrong language used
 - performance_label must be one of: أداء عالي, أداء جيد, يحتاج تحسين
 - All response text must be in Arabic
+- answer_review must be derived from the actual task requirements and expected outputs,
+  not generic questions — create one item per expected output example
 
 Respond ONLY in valid JSON:
 {{
@@ -176,9 +180,7 @@ Respond ONLY in valid JSON:
   "performance_label": "أداء عالي or أداء جيد or يحتاج تحسين",
   "feedback": "تقييم عام في جملتين",
   "answer_review": [
-    {{"id": 1, "question": "هل الدالة تعطي النتائج الصحيحة؟", "user_answer": "ملخص", "is_correct": true, "correct_feedback": "ما كان يجب كتابته"}},
-    {{"id": 2, "question": "هل الكود يتعامل مع الحالات الحدية؟", "user_answer": "ملخص", "is_correct": true, "correct_feedback": "الحالات الحدية المطلوبة"}},
-    {{"id": 3, "question": "هل جودة الكود وأسلوب الكتابة مناسبان؟", "user_answer": "ملخص", "is_correct": true, "correct_feedback": "ملاحظات على جودة الكود"}}
+    {{"id": 1, "question": "هل تعطي الدالة النتيجة الصحيحة لـ: <expected output example>?", "user_answer": "ملخص ما كتبه الطالب", "is_correct": true, "correct_feedback": "الحل الصحيح"}}
   ]
 }}
 """

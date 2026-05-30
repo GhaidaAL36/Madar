@@ -37,10 +37,9 @@ def submit_simulation(job_id, task_id, simulation_id):
     elif task.type == "data_analyst":
         result = evaluation_service.evaluateAnalysisReport(task.content, user_answers)
     elif task.type in ("review_comments", "review_document", "ux_problem", "stakeholder_notes"):
-        result = evaluation_service.evaluateOpenResponse(task.content, user_answers)
+        result = evaluation_service.evaluatePMResponse(task.content, user_answers)
     elif task.type == "write_function":
         result = evaluation_service.evaluateWriteFunction(task.content, user_answers)
-        result = evaluation_service.evaluatePerformanceAnalysis(task.content, user_answers)
     elif task.type == "debug_code":
         result = evaluation_service.evaluateDebugCode(task.content, user_answers)
     elif task.type == "code_review":
@@ -59,11 +58,14 @@ def submit_simulation(job_id, task_id, simulation_id):
     db.session.add(submission)
     db.session.flush()
 
+    score = result.get("score", 0)
+    performance_label = "أداء عالي" if score >= 85 else "أداء جيد" if score >= 60 else "يحتاج تحسين"
+
     review = Review(
         submission_id=submission.id,
-        score=result.get("score", 0),
-        fit_percent=result.get("score", 0),
-        fit_summary=result.get("performance_label", "") + " — " + result.get("feedback", ""),
+        score=score,
+        fit_percent=score,
+        fit_summary=performance_label + " — " + result.get("feedback", ""),
         strengths=[],
         improvements=[],
         detailed_feedback=[result.get("feedback", "")],

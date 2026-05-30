@@ -104,8 +104,8 @@ def get_pm_task(job_id, task_id):
         "comments":     content.get("comments", []),
         "documentTitle": content.get("task_title", ""),
         "sections":     content.get("sections", []),
-        "uxDescription": content.get("ux_description", ""),
-        "uxUserJourney": content.get("ux_user_journey", []),
+        "uxDescription": content.get("uxDescription", content.get("ux_description", "")),
+        "uxUserJourney": content.get("uxUserJourney", content.get("ux_user_journey", [])),
         "questions":    content.get("questions", []),
         "context":      content.get("context", ""),
     }), 200

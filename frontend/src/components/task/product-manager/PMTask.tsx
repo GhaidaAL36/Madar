@@ -35,8 +35,6 @@ interface Props {
   jobId: string;
   taskDbId: number;
   simulationId: string;
-  onSubmit: (answers: Record<number, string>) => void;
-  submitting?: boolean;
 }
 
 export default function PMTask({ taskType, jobId, taskDbId, simulationId }: Props) {

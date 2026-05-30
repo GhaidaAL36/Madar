@@ -102,9 +102,7 @@ export default function TaskSimulationPage() {
             taskType={task.type as PMTaskType}
             jobId={jobId!}
             taskDbId={taskDbId!}
-            simulationId={simulationId!} onSubmit={function (answers: Record<number, string>): void {
-              throw new Error("Function not implemented.");
-            }} />
+            simulationId={simulationId!} />
         );
     }
   };
