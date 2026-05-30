@@ -11,9 +11,8 @@ from ai.task.data_science.clean_data import DataCleanTask
 from ai.task.data_science.data_analyst import DataAnalystTask
 from ai.task.product_manager.review_comments import ReviewCommentsTask
 from ai.task.product_manager.review_document import ReviewDocumentTask
-# from ai.task.product_manager.ux_problem import UXProblemTask
-# from ai.task.product_manager.stakeholder_notes import StakeholderNotesTask
-
+from ai.task.product_manager.ux_problem import UXProblemTask
+from ai.task.product_manager.stakeholder_notes import StakeholderNotesTask
 
 evaluation_service = EvaluationService()
 
@@ -30,8 +29,8 @@ tasks = {
     "product-manager": {
         "review_comments": ReviewCommentsTask(),
         "review_document": ReviewDocumentTask(),
-        # "ux_problem":        UXProblemTask(),
-        # "stakeholder_notes": StakeholderNotesTask(),
+        "ux_problem": UXProblemTask(),
+        "stakeholder_notes": StakeholderNotesTask(),
     }
 }
 
@@ -62,3 +61,6 @@ def evaluateResponse(questions: list, user_answers: dict) -> dict:
 
 def evaluateOpenResponse(task_data: dict, user_answers: dict) -> dict:
     return evaluation_service.evaluateOpenResponse(task_data, user_answers)
+
+def evaluatePMResponse(task_data: dict, user_answers: dict) -> dict:
+    return evaluation_service.evaluatePMResponse(task_data, user_answers)

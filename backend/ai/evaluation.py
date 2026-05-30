@@ -265,3 +265,50 @@ Respond ONLY in valid JSON:
 }}
 """
         return self._callLLM(prompt, max_tokens=1000)
+
+    def evaluatePMResponse(self, task_data: dict, user_answers: dict) -> dict:
+        context = task_data.get("context", "")
+        key_findings = task_data.get("keyFindings", [])
+        questions = task_data.get("questions", [])
+
+        answers_text = ""
+        for q in questions:
+            qid = str(q["id"])
+            answers_text += f"السؤال {qid}: {q['question']}\nإجابة الطالب: {user_answers.get(qid, 'لم يجب')}\n\n"
+
+        prompt = f"""
+أنت مقيّم لإجابات طالب في مجال إدارة المنتج.
+
+السياق:
+{context}
+
+المحتوى الكامل للمهمة:
+{json.dumps(task_data, ensure_ascii=False, indent=2)}
+
+الإجابات المثالية المرجعية:
+{json.dumps(key_findings, ensure_ascii=False, indent=2)}
+
+إجابات الطالب:
+{answers_text}
+
+EVALUATION RULES:
+- All text must be in Arabic
+- There are no strictly correct or incorrect answers — evaluate quality of thinking
+- Judge based on: هل حدد التعارضات بشكل صحيح؟ هل تبريره منطقي؟ هل قراراته مبنية على بيانات؟
+- Score 0-100 based on depth of analysis, logical reasoning, and business understanding
+- Be fair and generous — partial credit for partially good answers
+- performance_label must be one of: أداء عالي, أداء جيد, يحتاج تحسين
+
+Respond ONLY in valid JSON:
+{{
+  "score": <0-100>,
+  "performance_label": "أداء عالي or أداء جيد or يحتاج تحسين",
+  "feedback": "تقييم عام بالعربي للطالب في جملتين",
+  "answer_review": [
+    {{"id": 1, "question": "نص السؤال", "user_answer": "إجابة الطالب", "is_correct": true, "correct_feedback": "تعليق على جودة الإجابة وما كان يمكن إضافته"}},
+    {{"id": 2, "question": "نص السؤال", "user_answer": "إجابة الطالب", "is_correct": true, "correct_feedback": "تعليق على جودة الإجابة وما كان يمكن إضافته"}},
+    {{"id": 3, "question": "نص السؤال", "user_answer": "إجابة الطالب", "is_correct": true, "correct_feedback": "تعليق على جودة الإجابة وما كان يمكن إضافته"}}
+  ]
+}}
+"""
+        return self._callLLM(prompt)
