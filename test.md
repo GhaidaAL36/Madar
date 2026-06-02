@@ -329,7 +329,7 @@ curl -X POST http://localhost:8000/api/auth/login \
 ### Result: Passed
 
 
-### User Login
+### User Logout
 
 **Request**:
 
@@ -504,6 +504,209 @@ curl -X POST http://localhost:8000/api/ai/task \
 ```
 
 <img width="1872" height="306" alt="image" src="https://github.com/user-attachments/assets/8c21bf34-3214-4aba-933c-6eb5185c0088" />
+
+
+### Result: Passed
+
+
+## Simulation Module
+
+### Create Simulation
+
+**Request**:
+
+```bash
+curl -X POST http://localhost:8000/api/jobs/software-engineer/tasks/374/simulations \
+-H "Content-Type: application/json"
+```
+
+**Expected Result**:
+
+*Response: simulation object with id, task_id, status, started_at, completed_at*
+
+**Actual Result**:
+
+```bash
+{
+  "id": "sim_001",
+  "task_id": 374,
+  "status": "in_progress",
+  "started_at": "2026-05-15T14:00:00",
+  "completed_at": null
+}
+```
+
+<img width="1573" height="300" alt="image" src="https://github.com/user-attachments/assets/8f3d3fd4-8fb4-4b7b-9db6-2131299ef91c" />
+
+
+### Result: Passed
+
+### Get Simulation
+
+**Request**:
+
+```bash
+curl -X GET http://localhost:8000/api/jobs/software-engineer/tasks/374/simulations/simulation_id
+```
+
+**Expected Result**:
+
+*Response: simulation object + full task details*
+
+**Actual Result**:
+
+```bash
+{
+  "simulation": {
+    "id": "sim_001",
+    "task_id": 374,
+    "status": "in_progress",
+    "started_at": "2026-05-15T14:00:00",
+    "completed_at": null
+  },
+  "task": {
+    "id": 374,
+    "job_id": "software-engineer",
+    "title": "...",
+    ...
+  }
+}
+```
+<img width="1622" height="426" alt="image" src="https://github.com/user-attachments/assets/a5767406-4e93-4048-8e25-88747f568d19" />
+<img width="1903" height="413" alt="image" src="https://github.com/user-attachments/assets/1ac1624c-f7f0-4d93-900f-58c40a111d88" />
+
+
+
+### Result: Passed
+
+
+## Simulation Module
+
+### Submit Simulation
+
+**Request**:
+
+```bash
+curl -X POST "http://localhost:8000/api/jobs/software-engineer/tasks/task_is/simulations/simulation_id/submit" \
+-H "Content-Type: application/json" \
+-d '{
+  "questions": ["Fix the bug"],
+  "user_answers": {
+    "answer": "Added null check before accessing object"
+  }
+}'
+```
+
+**Expected Result**:
+
+*Response: submission object with id, simulation_id, submitted_at*
+
+**Actual Result**:
+
+```bash
+{
+  "id": "0049f8cc-4952-4979-b9c1-4c8ed89f30ff",
+  "simulation_id": "34a8be32-f506-4634-85e9-1f3e95e9b18d",
+  "submitted_at": "2026-06-02T14:34:53"
+}
+```
+
+<img width="1892" height="440" alt="image" src="https://github.com/user-attachments/assets/ca3cf140-335a-41f3-9b75-26851743004f" />
+
+
+
+### Result: Passed
+
+
+## Review Module
+
+### Get Review
+
+**Request**:
+
+```bash
+curl -X GET "http://localhost:8000/api/jobs/software-engineer/tasks/task_id/simulations/simulation_id/review"
+```
+
+**Expected Result**:
+
+*Response: review object + job/task metadata*
+
+**Actual Result**:
+
+```bash
+{
+  "review": {
+    "score": 85,
+    "fitPercent": 85,
+    "fitSummary": "أداء عالي — Good structured answer",
+    "strengths": [],
+    "improvements": [],
+    "detailedFeedback": ["Good structured answer"],
+    "skills": [],
+    "answerReview": []
+  },
+  "jobTitleAr": "مهندس برمجيات",
+  "taskTitle": "Debug API Issue",
+  "taskDuration": 30
+}
+```
+
+<img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/a86dfc07-cf34-4d83-9580-832feba8aa9a" />
+<img width="1919" height="629" alt="image" src="https://github.com/user-attachments/assets/c64ef43e-a450-494a-833b-67ed38083be0" />
+
+
+
+### Result: Passed
+
+### Task Not Found
+
+**Request**:
+
+```bash
+curl -X GET "http://localhost:8000/api/jobs/software-engineer/tasks/999999/simulations/sim_001/review"
+```
+
+**Expected Result**:
+
+*Response: not found error*
+
+**Actual Result**:
+
+```bash
+{
+  "error": "Task not found"
+}
+```
+
+<img width="1777" height="194" alt="image" src="https://github.com/user-attachments/assets/c0c600f9-37ad-44ac-a400-3c3656f5c6a3" />
+
+
+### Result: Passed
+
+
+### Simulation Not Found
+
+**Request**:
+
+```bash
+curl -X GET "http://localhost:8000/api/jobs/software-engineer/tasks/374/simulations/invalid_sim/review"
+```
+
+**Expected Result**:
+
+*Response: not found error*
+
+**Actual Result**:
+
+```bash
+{
+  "error": "Simulation not found"
+}
+```
+
+<img width="1799" height="165" alt="image" src="https://github.com/user-attachments/assets/2ef78444-111b-4aaf-acbb-b8afbd98eb7d" />
+
 
 
 ### Result: Passed
