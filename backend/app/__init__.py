@@ -16,10 +16,15 @@ def create_app():
     bcrypt.init_app(app)
 
     CORS(app, 
-     origins=["http://localhost:5173", "http://127.0.0.1:5173"], 
+     origins=[
+         "http://localhost:5173", 
+         "http://127.0.0.1:5173",
+         "https://your-app.vercel.app"  # replace later
+     ], 
      supports_credentials=True, 
      allow_headers=["Content-Type", "Authorization"], 
      methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
+
     from .models import User, Profile, Job, Task, Simulation, Submission, Review
 
     with app.app_context():
