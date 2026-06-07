@@ -39,7 +39,6 @@ export default function AnswerPanel({ questions, onSubmit, submitting }: Props) 
     else if (current > 0) setCurrent((c) => c - 1);
   };
 
-  // ── Review stage ──────────────────────────────────────────────────────────
   if (stage === "review") {
     return (
       <div dir="rtl" className="flex flex-col h-full bg-bg-dark">
@@ -86,7 +85,7 @@ export default function AnswerPanel({ questions, onSubmit, submitting }: Props) 
             {submitting ? (
               <><i className="fa-solid fa-spinner fa-spin text-[11px]" /> جارٍ الإرسال...</>
             ) : (
-              <><i className="fa-solid fa-paper-plane text-[11px]" /> تأكيد الإرسال</>
+              <> تأكيد الإرسال</>
             )}
           </button>
         </div>
@@ -94,11 +93,9 @@ export default function AnswerPanel({ questions, onSubmit, submitting }: Props) 
     );
   }
 
-  // ── Answering stage ───────────────────────────────────────────────────────
   return (
     <div dir="rtl" className="flex flex-col h-full bg-bg-dark">
 
-      {/* Header + progress */}
       <div className="flex flex-col gap-2 px-5 pt-4 pb-3 border-b border-white/8 shrink-0">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
@@ -109,7 +106,6 @@ export default function AnswerPanel({ questions, onSubmit, submitting }: Props) 
           </span>
         </div>
 
-        {/* Progress bar */}
         <div className="h-1 w-full bg-white/8 rounded-full overflow-hidden">
           <div
             className="h-full bg-teal rounded-full transition-all duration-300"
@@ -117,7 +113,6 @@ export default function AnswerPanel({ questions, onSubmit, submitting }: Props) 
           />
         </div>
 
-        {/* Step dots */}
         <div className="flex items-center gap-1.5 justify-center pt-1">
           {questions.map((_, i) => (
             <button
@@ -135,7 +130,6 @@ export default function AnswerPanel({ questions, onSubmit, submitting }: Props) 
         </div>
       </div>
 
-      {/* Question */}
       <div className="flex-1 flex flex-col justify-between px-5 py-5 min-h-0">
         <div className="flex flex-col gap-4">
           <p className="text-[13px] text-text-on-dark leading-relaxed">
@@ -152,7 +146,6 @@ export default function AnswerPanel({ questions, onSubmit, submitting }: Props) 
           />
         </div>
 
-        {/* Nav buttons */}
         <div className="flex items-center justify-between pt-4">
           <button
             onClick={handleBack}

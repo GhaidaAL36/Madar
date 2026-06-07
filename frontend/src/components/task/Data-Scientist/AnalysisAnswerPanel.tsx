@@ -39,7 +39,6 @@ export default function AnalysisAnswerPanel({ onSubmit, submitting }: Props) {
 
   const canReview = insights.length > 0 && insights.every((ins) => ins.observation.trim()) && conclusion.trim();
 
-  // ── Review stage ──────────────────────────────────────────────────────────
   if (stage === "review") {
     return (
       <div dir="rtl" className="flex flex-col h-full bg-bg-dark">
@@ -78,7 +77,7 @@ export default function AnalysisAnswerPanel({ onSubmit, submitting }: Props) {
           >
             {submitting
               ? <><i className="fa-solid fa-spinner fa-spin text-[11px]" /> جارٍ الإرسال...</>
-              : <><i className="fa-solid fa-paper-plane text-[11px]" /> إرسال التقرير</>
+              : <> إرسال التقرير</>
             }
           </button>
         </div>
@@ -86,7 +85,6 @@ export default function AnalysisAnswerPanel({ onSubmit, submitting }: Props) {
     );
   }
 
-  // ── Report stage ──────────────────────────────────────────────────────────
   return (
     <div dir="rtl" className="flex flex-col h-full bg-bg-dark">
       <div className="flex items-center justify-between px-5 py-3 border-b border-white/8 shrink-0">
@@ -100,7 +98,6 @@ export default function AnalysisAnswerPanel({ onSubmit, submitting }: Props) {
 
         {insights.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
-            <i className="fa-solid fa-chart-bar text-[20px] text-text-muted/30" />
             <p className="text-[12px] text-text-muted/50 leading-relaxed">
               افحص البيانات وسجّل كل استنتاج تجده
             </p>
@@ -157,7 +154,6 @@ export default function AnalysisAnswerPanel({ onSubmit, submitting }: Props) {
           disabled={!canReview}
           className="w-full flex items-center justify-center gap-2 bg-teal/15 hover:bg-teal/25 disabled:opacity-30 disabled:cursor-not-allowed text-teal text-[12px] font-bold px-5 py-2.5 rounded-lg transition-colors cursor-pointer border-0"
         >
-          <i className="fa-solid fa-clipboard-check text-[11px]" />
           مراجعة التقرير
         </button>
       </div>

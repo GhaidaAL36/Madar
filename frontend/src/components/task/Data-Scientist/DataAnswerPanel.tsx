@@ -15,7 +15,6 @@ const PROBLEM_COLORS: Record<ProblemType, string> = {
   "أخرى":        "text-text-muted bg-white/5 border-white/10",
 };
 
-// ── Reusable custom dropdown ──────────────────────────────────────────────────
 function Dropdown({
   value,
   options,
@@ -71,7 +70,6 @@ function Dropdown({
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
 interface Props {
   columns: string[];
   rows: Record<string, string | number>[];
@@ -108,7 +106,6 @@ export default function DataAnswerPanel({ columns, rows, onSubmit, submitting }:
 
   const canReview = problems.length > 0 && problems.every((p) => p.fix.trim()) && conclusion.trim();
 
-  // ── Review stage ──────────────────────────────────────────────────────────
   if (stage === "review") {
     return (
       <div dir="rtl" className="flex flex-col h-full bg-bg-dark">
@@ -155,7 +152,7 @@ export default function DataAnswerPanel({ columns, rows, onSubmit, submitting }:
           >
             {submitting
               ? <><i className="fa-solid fa-spinner fa-spin text-[11px]" /> جارٍ الإرسال...</>
-              : <><i className="fa-solid fa-paper-plane text-[11px]" /> إرسال التقرير</>
+              : <>إرسال التقرير</>
             }
           </button>
         </div>
@@ -163,7 +160,6 @@ export default function DataAnswerPanel({ columns, rows, onSubmit, submitting }:
     );
   }
 
-  // ── Report stage ──────────────────────────────────────────────────────────
   return (
     <div dir="rtl" className="flex flex-col h-full bg-bg-dark">
       <div className="flex items-center justify-between px-5 py-3 border-b border-white/8 shrink-0">
@@ -198,7 +194,6 @@ export default function DataAnswerPanel({ columns, rows, onSubmit, submitting }:
               </button>
             </div>
 
-            {/* Row */}
             <div className="flex flex-col gap-1">
               <label className="text-[10px] text-text-muted">الصف المتأثر</label>
               <Dropdown
@@ -208,7 +203,6 @@ export default function DataAnswerPanel({ columns, rows, onSubmit, submitting }:
               />
             </div>
 
-            {/* Column */}
             <div className="flex flex-col gap-1">
               <label className="text-[10px] text-text-muted">العمود المتأثر</label>
               <Dropdown
@@ -218,7 +212,6 @@ export default function DataAnswerPanel({ columns, rows, onSubmit, submitting }:
               />
             </div>
 
-            {/* Problem type */}
             <div className="flex flex-col gap-1">
               <label className="text-[10px] text-text-muted">نوع المشكلة</label>
               <div className="flex flex-wrap gap-1.5">
@@ -238,7 +231,6 @@ export default function DataAnswerPanel({ columns, rows, onSubmit, submitting }:
               </div>
             </div>
 
-            {/* Fix */}
             <div className="flex flex-col gap-1">
               <label className="text-[10px] text-text-muted">الحل المقترح</label>
               <textarea

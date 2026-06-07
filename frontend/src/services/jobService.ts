@@ -1,5 +1,5 @@
 import api from "./api";
-import type { Job, Task } from "../types/Job";
+import type { Job, Task, TaskType } from "../types/Job";
 
 export const jobService = {
   getAll: async (): Promise<Job[]> => {
@@ -34,7 +34,7 @@ export const jobService = {
     const { data } = await api.get(`/ai/jobs/${jobId}`);
     return data.tasks.map((task: any) => ({
       id: task.id,           
-      type: task.id,         
+      type: task.id.replace(/_/g, "-") as TaskType,         
       title: task.title,
       fullTitle: task.title,
       duration: task.duration,

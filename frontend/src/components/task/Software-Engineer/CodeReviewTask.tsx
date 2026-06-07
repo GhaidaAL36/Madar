@@ -64,7 +64,6 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
     </div>
   );
 
-  // ── Preview stage ─────────────────────────────────────────────────────────
   if (stage === "preview") {
     return (
       <div dir="rtl" className="flex flex-col h-full bg-bg-dark">
@@ -113,7 +112,7 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
           >
             {submitting
               ? <><i className="fa-solid fa-spinner fa-spin text-[11px]" /> جارٍ الإرسال...</>
-              : <><i className="fa-solid fa-paper-plane text-[11px]" /> إرسال المراجعة</>
+              : <> إرسال المراجعة</>
             }
           </button>
         </div>
@@ -121,14 +120,11 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
     );
   }
 
-  // ── Review stage ──────────────────────────────────────────────────────────
   return (
     <div className="flex flex-1 h-full bg-bg-dark overflow-hidden">
 
-      {/* Left: read-only code editor */}
       <div className="flex flex-col flex-1 overflow-hidden">
 
-        {/* Read-only editor */}
         <div className="flex-1 overflow-hidden" dir="ltr">
           <Editor
             height="100%"
@@ -154,10 +150,8 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
         <HintsPanel hints={codeTask.reviewChecklist} />
       </div>
 
-      {/* Right: review form */}
       <div className="flex flex-col w-96 shrink-0 border-l border-white/8 overflow-hidden bg-bg-dark">
 
-        {/* Header */}
         <div dir="rtl" className="flex items-center justify-between px-5 py-3 border-b border-white/8 shrink-0">
           <span className="text-[11px] font-bold text-text-muted">تقرير المراجعة</span>
           {issues.length > 0 && (
@@ -167,7 +161,6 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
 
         <div className="flex-1 overflow-y-auto min-h-0 px-4 py-3 flex flex-col gap-3">
 
-          {/* Empty state */}
           {issues.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
               <i className="fa-solid fa-magnifying-glass-code text-[20px] text-text-muted/30" />
@@ -177,7 +170,6 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
             </div>
           )}
 
-          {/* Issue cards */}
           {issues.map((issue, i) => (
             <div key={issue.id} dir="rtl" className="flex flex-col gap-2 bg-bg-dark-secondary rounded-lg px-3 py-3 border border-white/6">
               <div className="flex items-center justify-between">
@@ -225,7 +217,6 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
             </div>
           ))}
 
-          {/* Add issue */}
           <button
             onClick={addIssue}
             className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-white/15 hover:border-teal/40 text-[12px] text-text-muted hover:text-teal transition-all cursor-pointer bg-transparent"
@@ -234,7 +225,6 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
             أضف ملاحظة
           </button>
 
-          {/* Summary */}
           <div dir="rtl" className="flex flex-col gap-1.5 mt-1">
             <label className="text-[11px] font-bold text-text-muted">الملخص النهائي</label>
             <p className="text-[10px] text-text-muted/50 mb-1">
@@ -250,14 +240,12 @@ export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }
           </div>
         </div>
 
-        {/* Submit */}
         <div className="px-5 py-3 border-t border-white/8 shrink-0">
           <button
             onClick={() => setStage("preview")}
             disabled={!canPreview}
             className="w-full flex items-center justify-center gap-2 bg-teal/15 hover:bg-teal/25 disabled:opacity-30 disabled:cursor-not-allowed text-teal text-[12px] font-bold px-5 py-2.5 rounded-lg transition-colors cursor-pointer border-0"
           >
-            <i className="fa-solid fa-clipboard-check text-[11px]" />
             مراجعة التقرير
           </button>
         </div>
