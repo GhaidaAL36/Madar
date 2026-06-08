@@ -73,7 +73,7 @@ function ReviewPage() {
           <ScoreRing score={review.score} />
         </div>
 
-        <SectionCard >
+        <SectionCard title="">
           <div className="flex flex-col gap-3">
             {review.detailedFeedback.map((para, i) => (
               <p key={i} className="text-[14px] text-text-muted leading-[1.8] bg-bg-light rounded-md px-5 py-4">
@@ -83,7 +83,7 @@ function ReviewPage() {
           </div>
         </SectionCard>
 
-        <SectionCard >
+        <SectionCard title="">
           <div className="flex flex-col gap-3">
             {review.answerReview.map((item) => (
               <div

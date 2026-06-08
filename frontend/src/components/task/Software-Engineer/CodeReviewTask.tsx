@@ -29,8 +29,7 @@ let idCounter = 0;
 const uid = () => String(++idCounter);
 
 export default function CodeReviewTask({ jobId, taskDbId, onSubmit, submitting }: Props) {
-  const { codeTask, loading, error } = useCodeTask(jobId, String(taskDbId), "fix-code");
-  const [issues, setIssues] = useState<ReviewIssue[]>([]);
+  const { codeTask, loading, error } = useCodeTask(jobId, String(taskDbId), "code-review"); const [issues, setIssues] = useState<ReviewIssue[]>([]);
   const [summary, setSummary] = useState("");
   const [stage, setStage] = useState<Stage>("review");
   const [checklist, setChecklist] = useState<Record<number, boolean>>({});

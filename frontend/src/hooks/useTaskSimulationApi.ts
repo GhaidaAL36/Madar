@@ -46,7 +46,6 @@ export function useTaskSimulation(jobId: string, aiTaskId: string): UseTaskSimul
                   ),
                   starterCode: codeTask.starterCode,
                   instructions: codeTask.instructions,
-                  questions: codeTask.questions,
                 });
               });
           });

@@ -20,7 +20,5 @@ export interface SimulationTask {
   evaluation_criteria: EvaluationCriterion[];
   starterCode?: string;
   instructions?: string;
-  questions?: CodeTaskQuestion[];
 }
 
-import type { CodeTaskQuestion } from "./CodeTask";
