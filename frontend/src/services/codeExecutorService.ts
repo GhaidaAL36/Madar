@@ -1,6 +1,6 @@
 // src/services/codeExecutorService.ts
 
-const BASE_URL = "/onecompiler/v1/run";
+const BASE_URL = "https://onecompiler.com/api/v1/run"
 const API_KEY = import.meta.env.VITE_ONECOMPILER_KEY;
 
 export const LANGUAGE_CONFIG = {
