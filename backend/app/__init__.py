@@ -3,6 +3,7 @@ from flask_cors import CORS
 from .extensions import db, jwt, bcrypt
 from .config import config
 import os
+import re
 
 
 def create_app():
@@ -19,7 +20,8 @@ def create_app():
      origins=[
          "http://localhost:5173", 
          "http://127.0.0.1:5173",
-         "https://madar-pi.vercel.app"
+         "https://madar-pi.vercel.app",
+         re.compile(r"https://madar-.*\.vercel\.app"),
      ], 
      supports_credentials=True, 
      allow_headers=["Content-Type", "Authorization"], 

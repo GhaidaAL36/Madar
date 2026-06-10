@@ -1,4 +1,3 @@
-// useCodeTask.ts
 import { useEffect, useState } from "react";
 import { taskService } from "../services/taskService";
 import type { CodeTaskData } from "../types/CodeTask";
@@ -13,7 +12,7 @@ interface UseCodeTaskResult {
 export function useCodeTask(
   jobId: string,
   taskId: string,
-  taskType: CodeTaskType  // kept for API symmetry but not in dep array
+  taskType: CodeTaskType  
 ): UseCodeTaskResult {
   const [codeTask, setCodeTask] = useState<CodeTaskData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +27,7 @@ export function useCodeTask(
       .then(setCodeTask)
       .catch(() => setError("فشل تحميل بيانات المهمة"))
       .finally(() => setLoading(false));
-  }, [jobId, taskId]); // taskType intentionally excluded — doesn't affect the fetch
+  }, [jobId, taskId]); 
 
   return { codeTask, loading, error };
 }
