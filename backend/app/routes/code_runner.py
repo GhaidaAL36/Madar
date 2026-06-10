@@ -11,7 +11,7 @@ ONECOMPILER_KEY = os.getenv("ONECOMPILER_KEY")
 
 
 @code_runner_bp.route("/run-code", methods=["POST", "OPTIONS"])
-@cross_origin(origins=["http://localhost:5173", "http://127.0.0.1:5173"], supports_credentials=True)
+@cross_origin(origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://madar-pi.vercel.app"], supports_credentials=True)
 def run_code():
     if request.method == "OPTIONS":
         return jsonify({}), 200

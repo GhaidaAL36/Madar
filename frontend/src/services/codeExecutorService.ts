@@ -1,7 +1,5 @@
-// src/services/codeExecutorService.ts
 
-const BASE_URL = "https://onecompiler.com/api/v1/run"
-const API_KEY = import.meta.env.VITE_ONECOMPILER_KEY;
+const BASE_URL = `${import.meta.env.VITE_API_URL}/run-code`;
 
 export const LANGUAGE_CONFIG = {
   javascript: {
@@ -39,7 +37,6 @@ export async function executeCode(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-API-Key": API_KEY,
     },
     body: JSON.stringify({
       language,
