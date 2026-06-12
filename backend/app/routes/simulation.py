@@ -22,7 +22,7 @@ def create_simulation(job_id, task_id):
 
     simulation = Simulation(
         task_id=task_id,
-        user_id=user_id,   # None for anonymous
+        user_id=user_id, 
         status="in_progress",
         started_at=datetime.utcnow(),
     )

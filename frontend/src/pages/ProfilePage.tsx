@@ -26,7 +26,7 @@ const TASK_TYPE_LABELS: Record<string, string> = {
   write_function:     "كتابة كود",
   debug_code:         "تصحيح كود",
   code_review:        "مراجعة كود",
-  analyze_data:       "تحليل بيانات",
+  data_analyst:       "تحليل بيانات",
   clean_data:         "تنظيف بيانات",
   review_comments:    "مراجعة تعليقات",
   review_document:    "مراجعة وثيقة",
@@ -51,7 +51,6 @@ const SimulationCard = ({ item }: { item: SimulationHistory }) => {
           {TASK_TYPE_LABELS[item.taskType] ?? item.taskType}
         </span>
 
-        {/* Titles */}
         <div className="min-w-0">
           <div className="text-[15px] font-bold text-bg-dark-secondary truncate">
             {item.jobTitleAr}
@@ -63,12 +62,10 @@ const SimulationCard = ({ item }: { item: SimulationHistory }) => {
       </div>
 
       <div className="flex items-center gap-4 shrink-0">
-        {/* Date */}
         <span className="text-[12px] text-text-muted hidden sm:block">
           {completedDate}
         </span>
 
-        {/* Score bar */}
         {score > 0 && (
           <div className="flex items-center gap-2">
             <div className="w-24 h-2 bg-bg-card rounded-full overflow-hidden">
@@ -151,7 +148,6 @@ function ProfilePage() {
             </button>
           </div>
 
-          {/* Interests */}
           <div className="bg-bg-card rounded-[20px] px-8 py-7 shadow-[0_8px_24px_rgba(26,58,74,0.06)] relative">
             <div className="text-[13px] font-bold text-bg-dark-secondary mb-5 uppercase tracking-[0.08em]">
               {LABELS.interests}
@@ -198,7 +194,6 @@ function ProfilePage() {
             )}
           </div>
 
-          {/* Simulation History */}
           <div className="bg-bg-card rounded-[20px] px-8 py-7 shadow-[0_8px_24px_rgba(26,58,74,0.06)]">
             <div className="text-[13px] font-bold text-bg-dark-secondary mb-6 uppercase tracking-[0.08em]">
               {LABELS.simulationHistory}

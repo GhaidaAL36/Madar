@@ -8,11 +8,11 @@ export interface Profile {
 export interface SimulationHistory {
   simulationId: string;
   completedAt: string;
-  jobId: string;
+  jobId: string | null;
   jobTitleAr: string;
   taskTitle: string;
   taskType: string;
-  taskDbId: number;
+  taskDbId: number | null;
   score: number | null;
   fitPercent: number | null;
 }
