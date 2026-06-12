@@ -35,8 +35,8 @@ const TASK_TYPE_LABELS: Record<string, string> = {
 };
 
 const SimulationCard = ({ item }: { item: SimulationHistory }) => {
-  const score = item.fitPercent ?? item.score ?? 0;
-  const color = getScoreColor(score);
+  const score = item.fitPercent ?? item.score ?? null;
+  const color = getScoreColor(score ?? 0);
   const completedDate = new Date(item.completedAt).toLocaleDateString("ar-SA", {
     year: "numeric",
     month: "short",
@@ -46,7 +46,6 @@ const SimulationCard = ({ item }: { item: SimulationHistory }) => {
   return (
     <div className="flex items-center justify-between bg-bg-card-secondary rounded-[16px] px-5 py-4 transition-all duration-200 hover:-translate-y-[2px] hover:shadow-[0_10px_30px_rgba(46,125,140,0.12)]">
       <div className="flex items-center gap-4 min-w-0">
-        {/* Task type badge */}
         <span className="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-full bg-teal/10 text-teal border border-teal/20">
           {TASK_TYPE_LABELS[item.taskType] ?? item.taskType}
         </span>
@@ -66,7 +65,7 @@ const SimulationCard = ({ item }: { item: SimulationHistory }) => {
           {completedDate}
         </span>
 
-        {score > 0 && (
+        {score !== null && (
           <div className="flex items-center gap-2">
             <div className="w-24 h-2 bg-bg-card rounded-full overflow-hidden">
               <div

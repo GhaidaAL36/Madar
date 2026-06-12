@@ -36,6 +36,7 @@ def submit_simulation(job_id, task_id, simulation_id):
         result = evaluation_service.evaluateDataReport(task.content, user_answers)
     elif task.type == "data_analyst":
         result = evaluation_service.evaluateAnalysisReport(task.content, user_answers)
+        print(">>> data_analyst result:", result) 
     elif task.type in ("review_comments", "review_document", "ux_problem", "stakeholder_notes"):
         result = evaluation_service.evaluatePMResponse(task.content, user_answers)
     elif task.type == "write_function":
