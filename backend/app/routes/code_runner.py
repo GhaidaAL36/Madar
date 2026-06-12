@@ -11,8 +11,8 @@ ONECOMPILER_KEY = os.getenv("ONECOMPILER_KEY")
 
 
 @code_runner_bp.route("/run-code", methods=["POST", "OPTIONS"])
-@cross_origin(origins=["http://localhost:5173", "http://127.0.0.1:5173", "https://madar-pi.vercel.app", re.compile(r"https://madar-.*\.vercel\.app")], supports_credentials=True)
 def run_code():
+    print(">>> run_code HIT, method:", request.method)
     if request.method == "OPTIONS":
         return jsonify({}), 200
 
@@ -35,6 +35,8 @@ def run_code():
             headers={
                 "Content-Type": "application/json",
                 "X-API-Key": ONECOMPILER_KEY,
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "application/json",
             },
             json={
                 "language": language,
@@ -49,6 +51,6 @@ def run_code():
         return jsonify({"error": str(e)}), 502
 
     if not res.ok:
-        return jsonify({"error": "Code execution failed"}), res.status_code
+        return jsonify({"error": "Code execution failed", "detail": res.text, "status": res.status_code}), 200
 
     return jsonify(res.json()), 200

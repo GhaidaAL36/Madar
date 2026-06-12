@@ -40,8 +40,8 @@ export async function executeCode(
     },
     body: JSON.stringify({
       language,
+      code,
       stdin,
-      files: [{ name: config.defaultFile, content: code }],
     }),
   });
 
