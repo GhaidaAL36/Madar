@@ -96,74 +96,47 @@ def add_job():
     db.session.commit()
     return jsonify({"message": "Job created", "id": job.id}), 201
 
-
 @admin_bp.route('/simulations', methods=['GET'])
 @require_admin
 def get_all_simulations():
-    simulations = (
-        Simulation.query
-        .order_by(Simulation.started_at.desc())
-        .limit(50)  
-        .all()
-    )
+    from sqlalchemy import text
+    rows = db.session.execute(text("""
+        SELECT 
+            s.id as sim_id,
+            s.status,
+            s.started_at,
+            s.completed_at,
+            t.id as task_id,
+            t.title as task_title,
+            t.type as task_type,
+            j.id as job_id,
+            j.title_ar,
+            r.score,
+            r.fit_percent
+        FROM simulations s
+        LEFT JOIN tasks t ON t.id = s.task_id
+        LEFT JOIN jobs j ON j.id = t.job_id
+        LEFT JOIN submissions sub ON sub.simulation_id = s.id
+        LEFT JOIN reviews r ON r.submission_id = sub.id
+        ORDER BY s.started_at DESC
+        LIMIT 50
+    """)).fetchall()
 
     result = []
-    for sim in simulations:
-        task = Task.query.get(sim.task_id)
-        job = Job.query.get(task.job_id) if task else None
-        submission = Submission.query.filter_by(simulation_id=sim.id).first()
-        review = Review.query.filter_by(submission_id=submission.id).first() if submission else None
-
+    for row in rows:
         result.append({
-            "simulationId":  sim.id,
-            "status":        sim.status,
-            "startedAt":     sim.started_at.isoformat(),
-            "completedAt":   sim.completed_at.isoformat() if sim.completed_at else None,
-            "jobId":         job.id if job else None,
-            "jobTitleAr":    job.title_ar if job else "",
-            "taskTitle":     task.title if task else "",
-            "taskType":      task.type if task else "",
-            "taskDbId":      task.id if task else None,
-            "score":         review.score if review else None,
-            "fitPercent":    review.fit_percent if review else None,
-            "user":          None,
-        })
-
-    return jsonify(result), 200
-    simulations = (
-        Simulation.query
-        .order_by(Simulation.started_at.desc())
-        .all()
-    )
-
-    result = []
-    for sim in simulations:
-        task = Task.query.get(sim.task_id)
-        job = Job.query.get(task.job_id) if task else None
-        submission = Submission.query.filter_by(simulation_id=sim.id).first()
-        review = Review.query.filter_by(submission_id=submission.id).first() if submission else None
-
-        user = None
-        if hasattr(sim, 'user_id') and sim.user_id:
-            user = User.query.get(sim.user_id)
-
-        result.append({
-            "simulationId":  sim.id,
-            "status":        sim.status,
-            "startedAt":     sim.started_at.isoformat(),
-            "completedAt":   sim.completed_at.isoformat() if sim.completed_at else None,
-            "jobId":         job.id if job else None,
-            "jobTitleAr":    job.title_ar if job else "",
-            "taskTitle":     task.title if task else "",
-            "taskType":      task.type if task else "",
-            "taskDbId":      task.id if task else None,
-            "score":         review.score if review else None,
-            "fitPercent":    review.fit_percent if review else None,
-            "user": {
-                "id":    user.id,
-                "name":  user.name,
-                "email": user.email,
-            } if user else None,   
+            "simulationId": row.sim_id,
+            "status":       row.status,
+            "startedAt":    row.started_at.isoformat(),
+            "completedAt":  row.completed_at.isoformat() if row.completed_at else None,
+            "jobId":        row.job_id,
+            "jobTitleAr":   row.title_ar or "",
+            "taskTitle":    row.task_title or "",
+            "taskType":     row.task_type or "",
+            "taskDbId":     row.task_id,
+            "score":        row.score,
+            "fitPercent":   row.fit_percent,
+            "user":         None,
         })
 
     return jsonify(result), 200
