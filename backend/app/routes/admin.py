@@ -112,9 +112,8 @@ def get_all_simulations():
         submission = Submission.query.filter_by(simulation_id=sim.id).first()
         review = Review.query.filter_by(submission_id=submission.id).first() if submission else None
 
-        # get user info if simulation is linked to a user
         user = None
-        if sim.user_id:
+        if hasattr(sim, 'user_id') and sim.user_id:
             user = User.query.get(sim.user_id)
 
         result.append({
