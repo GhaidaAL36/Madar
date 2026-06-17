@@ -96,9 +96,40 @@ def add_job():
     db.session.commit()
     return jsonify({"message": "Job created", "id": job.id}), 201
 
+
 @admin_bp.route('/simulations', methods=['GET'])
 @require_admin
 def get_all_simulations():
+    simulations = (
+        Simulation.query
+        .order_by(Simulation.started_at.desc())
+        .limit(50)  
+        .all()
+    )
+
+    result = []
+    for sim in simulations:
+        task = Task.query.get(sim.task_id)
+        job = Job.query.get(task.job_id) if task else None
+        submission = Submission.query.filter_by(simulation_id=sim.id).first()
+        review = Review.query.filter_by(submission_id=submission.id).first() if submission else None
+
+        result.append({
+            "simulationId":  sim.id,
+            "status":        sim.status,
+            "startedAt":     sim.started_at.isoformat(),
+            "completedAt":   sim.completed_at.isoformat() if sim.completed_at else None,
+            "jobId":         job.id if job else None,
+            "jobTitleAr":    job.title_ar if job else "",
+            "taskTitle":     task.title if task else "",
+            "taskType":      task.type if task else "",
+            "taskDbId":      task.id if task else None,
+            "score":         review.score if review else None,
+            "fitPercent":    review.fit_percent if review else None,
+            "user":          None,
+        })
+
+    return jsonify(result), 200
     simulations = (
         Simulation.query
         .order_by(Simulation.started_at.desc())
@@ -132,7 +163,7 @@ def get_all_simulations():
                 "id":    user.id,
                 "name":  user.name,
                 "email": user.email,
-            } if user else None,   # None = anonymous simulation
+            } if user else None,   
         })
 
     return jsonify(result), 200
